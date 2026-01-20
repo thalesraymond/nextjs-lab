@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Home, Workflow, LayoutDashboard } from "lucide-react";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { ModeToggle } from "@/components/mode-toggle";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -45,10 +46,11 @@ export function AppSidebar() {
             );
         })}
       </nav>
-      <div className="p-4 border-t border-zinc-200 dark:border-zinc-800">
+      <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
         <div className="text-xs text-zinc-500">
             OpenSpec Lab
         </div>
+        <ModeToggle />
       </div>
     </div>
   );
