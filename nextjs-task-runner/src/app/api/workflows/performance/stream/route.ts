@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
       try {
         // Generate tasks
-        const tasks = generateHugeWorkflow(1000000);
+        const tasks = generateHugeWorkflow(10000);
         
         // Initial stats
         sendEvent({

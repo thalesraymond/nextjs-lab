@@ -174,7 +174,7 @@ export default function PerformanceShowcasePage() {
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
         <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight">Performance Showcase (1M Nodes)</h1>
+            <h1 className="text-3xl font-bold tracking-tight">Performance Showcase</h1>
             <p className="text-zinc-500 dark:text-zinc-400">Server-Side Execution • Streaming Updates</p>
         </div>
         <button
