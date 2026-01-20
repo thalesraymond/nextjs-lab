@@ -1,23 +1,6 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import {
-  TaskRunnerBuilder,
-  TaskStep,
-  StandardExecutionStrategy,
-  RetryingExecutionStrategy,
-} from "@calmo/task-runner";
-import { generateHugeWorkflow, CIContext } from "@/features/workflow/utils/workflow-generator";
-
-// Local data to drive the logic
-const pipelineData: CIContext = {
-  repoName: "huge-monorepo",
-  branch: "main",
-  filesChanged: ["everything"],
-  testCoverage: 99,
-  securityVulnerabilities: 0,
-  environment: "production",
-};
 
 export default function PerformanceShowcasePage() {
   const [isRunning, setIsRunning] = useState(false);
@@ -30,12 +13,6 @@ export default function PerformanceShowcasePage() {
   });
   const [timer, setTimer] = useState<string>("0.00 ms");
   
-  // Ref to hold state without re-rendering for every event if we wanted to throttle,
-  // but for 1M nodes updates might be too frequent.
-  // We'll update React state directly but maybe debounce if needed.
-  // Actually, updating React state 1M times will kill the browser.
-  // We MUST use a ref for the counters and an interval to update the UI.
-
   const countersRef = useRef({
     total: 0,
     pending: 0,
@@ -46,10 +23,15 @@ export default function PerformanceShowcasePage() {
     endTime: 0,
   });
 
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(0);
 
   const updateUI = (_timestamp?: number) => {
     const c = countersRef.current;
+    
+    // Recalculate pending based on total - (running + success + failure)
+    // or we can track it precisely. 
+    // Let's track precise deltas.
+    
     setStats({
       total: c.total,
       pending: c.pending,
@@ -71,14 +53,10 @@ export default function PerformanceShowcasePage() {
   const runHugeWorkflow = async () => {
     setIsRunning(true);
     
-    // Generate tasks efficiently
-    console.time("Generation");
-    const tasks = generateHugeWorkflow(1000000);
-    console.timeEnd("Generation");
-
+    // Reset counters
     countersRef.current = {
-      total: tasks.length,
-      pending: tasks.length,
+      total: 0,
+      pending: 0,
       running: 0,
       success: 0,
       failure: 0,
@@ -89,51 +67,122 @@ export default function PerformanceShowcasePage() {
     // Start UI loop
     requestRef.current = requestAnimationFrame(updateUI);
 
-    const runner = new TaskRunnerBuilder(pipelineData)
-      .useStrategy(new StandardExecutionStrategy()) // No retries for speed in this demo
-      .on("workflowStart", () => {
-         countersRef.current.startTime = performance.now();
-      })
-      .on("taskStart", () => {
-        countersRef.current.pending--;
-        countersRef.current.running++;
-      })
-      .on("taskEnd", ({ result }) => {
-        countersRef.current.running--;
-        if (result.status === 'success') {
-          countersRef.current.success++;
-        } else {
-          countersRef.current.failure++;
-        }
-      })
-      .build();
-
     try {
-        await runner.execute(tasks, {
-            concurrency: 1000, // Higher concurrency for 1M nodes to finish in reasonable time? 
-            // well, Javascript is single threaded mostly, but async works.
-        });
+        const response = await fetch('/api/workflows/performance/stream');
+        if (!response.body) throw new Error("No response body");
+        
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            // Last line might be incomplete
+            buffer = lines.pop() || '';
+            
+            for (const line of lines) {
+                if (!line.trim()) continue;
+                try {
+                    const event = JSON.parse(line);
+                    handleServerEvent(event);
+                } catch (e) {
+                    console.error("Error parsing JSON line", e);
+                }
+            }
+        }
     } catch (error) {
         console.error("Execution failed", error);
     } finally {
         countersRef.current.endTime = performance.now();
         setIsRunning(false);
-        // One last update
         cancelAnimationFrame(requestRef.current!);
         updateUI();
     }
   };
 
+  const handleServerEvent = (event: any) => {
+      if (event.type === 'init') {
+          countersRef.current.total = event.total;
+          countersRef.current.pending = event.total;
+          countersRef.current.startTime = performance.now(); // Sync start time roughly
+      } else if (event.type === 'update') {
+          countersRef.current.running += event.runningDelta;
+          
+          // Pending decreases when tasks start (runningDelta > 0 means tasks started)
+          // Wait, runningDelta is net change.
+          // Workflow events: 
+          // taskStart: running++, pending--
+          // taskEnd: running--, success/failure++
+          
+          // Let's deduce pending change from the other deltas if strict mapping isn't sent.
+          // But our server sends "runningDelta", "successDelta", "failureDelta" of the *counters*? 
+          // No, the server code does:
+          // runningDelta++ on start
+          // runningDelta-- on end
+          
+          // We need to know how many *started* to reduce pending.
+          // runningDelta = (started - ended).
+          // successDelta = endedSuccess.
+          // failureDelta = endedFailure.
+          // endedTotal = successDelta + failureDelta.
+          // started = runningDelta + endedTotal.
+          
+          // So decrease pending by 'started'.
+          const endedCount = event.successDelta + event.failureDelta;
+          const startedCount = event.runningDelta + endedCount;
+          
+          countersRef.current.pending -= startedCount;
+          countersRef.current.success += event.successDelta;
+          countersRef.current.failure += event.failureDelta;
+          // running is directly adjusted by delta
+          // Actually, if we just apply keys:
+          // running += runningDelta.
+          // success += successDelta.
+          // failure += failureDelta.
+          
+          // We just need to ensure 'pending' is accurate. 
+          // Initial pending = Total.
+          // Pending = Total - (Running + Success + Failure) is always true?
+          // Let's verify:
+          // Task starts: Pending -> Running. (Pending--, Running++)
+          // Task ends: Running -> Success. (Running--, Success++)
+          // Task ends: Running -> Failure. (Running--, Failure++)
+          // So yes, Total = Pending + Running + Success + Failure.
+          
+          // So we can recompute pending derived from the others.
+          // But we are using refs for performance.
+          // Let's just update the explicit counters we got deltas for, then derive pending.
+      } else if (event.type === 'done') {
+          // ensure 100% completion visually
+          countersRef.current.running = 0;
+          countersRef.current.pending = 0;
+      }
+      
+      // Re-derive pending to avoid drift
+      countersRef.current.pending = countersRef.current.total - (
+          countersRef.current.running + 
+          countersRef.current.success + 
+          countersRef.current.failure
+      );
+  };
+
   return (
     <div className="p-8 space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Performance Showcase (1M Nodes)</h1>
+        <div className="space-y-1">
+            <h1 className="text-3xl font-bold tracking-tight">Performance Showcase (1M Nodes)</h1>
+            <p className="text-zinc-500 dark:text-zinc-400">Server-Side Execution • Streaming Updates</p>
+        </div>
         <button
           onClick={runHugeWorkflow}
           disabled={isRunning}
-          className="px-4 py-2 bg-red-600 text-white dark:bg-red-500 dark:text-white rounded-md disabled:opacity-50 font-medium hover:bg-red-700 transition-colors"
+          className="px-4 py-2 bg-purple-600 text-white dark:bg-purple-500 dark:text-white rounded-md disabled:opacity-50 font-medium hover:bg-purple-700 transition-colors"
         >
-          {isRunning ? "Running..." : "Run 1 Million Tasks"}
+          {isRunning ? "Running..." : "Run on Server"}
         </button>
       </div>
 
@@ -149,8 +198,8 @@ export default function PerformanceShowcasePage() {
         </div>
       </div>
       
-      <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-900 rounded-md text-sm text-yellow-800 dark:text-yellow-200">
-        <strong>Note:</strong> Generating 1,000,000 tasks takes significant memory. We use valid random DAG generation. Visualizations are disabled to prevent crashing the browser.
+      <div className="p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-900 rounded-md text-sm text-purple-800 dark:text-purple-200">
+        <strong>Server-Side Execution:</strong> The workflow is now executing on the server (Node.js) and streaming updates to the client. This allows for massive scale without freezing your browser.
       </div>
     </div>
   );

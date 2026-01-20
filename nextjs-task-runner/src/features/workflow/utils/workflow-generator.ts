@@ -90,7 +90,7 @@ export function generateHugeWorkflow(size: number = 1000000): TaskStep<CIContext
   
   const shortRun = async () => {
      // 20ms delay
-     await new Promise(resolve => setTimeout(resolve, 5));
+     await new Promise(resolve => setTimeout(resolve, 2));
      return { status: "success" as const, message: "Done" };
   };
 
