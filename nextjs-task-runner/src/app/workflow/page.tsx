@@ -144,10 +144,44 @@ export default function WorkflowPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [results, setResults] = useState<any>(null);
 
+  // State for real-time task status
+  const [taskStatuses, setTaskStatuses] = useState<Record<string, "pending" | "running" | "success" | "failure">>({});
+
+  // Helper to generate Mermaid class definitions
+  const getMermaidStyles = () => `
+classDef default fill:#fff,stroke:#333,stroke-width:1px;
+classDef running fill:#3b82f6,stroke:#1d4ed8,color:#fff,stroke-width:2px;
+classDef success fill:#22c55e,stroke:#15803d,color:#fff,stroke-width:2px;
+classDef failure fill:#ef4444,stroke:#b91c1c,color:#fff,stroke-width:2px;
+`;
+
+  // Helper to inject class assignments into the graph definition
+  const augmentGraphWithStyles = (baseGraph: string, statuses: typeof taskStatuses) => {
+    if (!baseGraph) return "";
+    let augmented = baseGraph + "\n" + getMermaidStyles();
+    Object.entries(statuses).forEach(([taskName, status]) => {
+      if (status !== "pending") {
+        augmented += `\nclass ${taskName} ${status};`;
+      }
+    });
+    return augmented;
+  };
+
+  // Simplest change: 
+  const [baseGraphDef, setBaseGraphDef] = useState<string>("");
+
+  // Update visible graph when base or statuses change
+  useEffect(() => {
+      if (baseGraphDef) {
+          setGraphDef(augmentGraphWithStyles(baseGraphDef, taskStatuses));
+      }
+  }, [baseGraphDef, taskStatuses]);
+
   const runWorkflow = async () => {
     setIsRunning(true);
     setLogs([]);
     setResults(null);
+    setTaskStatuses({}); // Reset statuses
     
     // Add delays to the tasks for visual effect (already added above in run definitions)
 
@@ -155,9 +189,11 @@ export default function WorkflowPage() {
       .useStrategy(new RetryingExecutionStrategy(new StandardExecutionStrategy()))
       .on("taskStart", ({ step }) => {
         setLogs((prev) => [...prev, `🚀 Starting: ${step.name}`]);
+        setTaskStatuses((prev) => ({ ...prev, [step.name]: "running" }));
       })
       .on("taskEnd", ({ step, result }) => {
         setLogs((prev) => [...prev, `✅ Finished: ${step.name} [${result.status}]`]);
+        setTaskStatuses((prev) => ({ ...prev, [step.name]: result.status === 'success' ? 'success' : 'failure' }));
       })
       .build();
 
@@ -169,7 +205,7 @@ export default function WorkflowPage() {
             ? (TaskRunnerBuilder as any).getMermaidGraph(tasks) 
             : (runner.constructor as any).getMermaidGraph(tasks);
             
-        setGraphDef(mermaidGraph);
+        setBaseGraphDef(mermaidGraph);
     } catch (e) {
         console.error("Could not generate graph", e);
         setLogs((prev) => [...prev, `⚠️ Error generating graph: ${e}`]);
