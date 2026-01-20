@@ -1,0 +1,267 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
+import {
+  TaskRunnerBuilder,
+  TaskStep,
+  StandardExecutionStrategy,
+  RetryingExecutionStrategy,
+} from "@calmo/task-runner";
+import { WorkflowGraph } from "@/components/workflow-graph";
+
+// 1. Define the Context based on a CI/CD scenario
+interface CIContext {
+  repoName: string;
+  branch: string;
+  filesChanged: string[];
+  testCoverage: number;
+  securityVulnerabilities: number;
+  buildArtifact?: string;
+  environment: "staging" | "production" | "none";
+}
+
+// 2. Local data to drive the logic
+const pipelineData: CIContext = {
+  repoName: "cool-viz-app",
+  branch: "main",
+  filesChanged: ["src/index.ts", "package.json", "README.md"],
+  testCoverage: 85,
+  securityVulnerabilities: 0,
+  environment: "production",
+};
+
+// 3. Define the 10+ Tasks
+const tasks: TaskStep<CIContext>[] = [
+  {
+    name: "InstallDependencies",
+    run: async () => {
+        await new Promise(r => setTimeout(r, 800)); // Simulate work
+        return { status: "success", message: "npm install completed" };
+    },
+  },
+  {
+    name: "Linting",
+    dependencies: ["InstallDependencies"],
+    run: async () => {
+        await new Promise(r => setTimeout(r, 500));
+        return { status: "success" };
+    },
+  },
+  {
+    name: "UnitTests",
+    dependencies: ["InstallDependencies"],
+    retry: { attempts: 2, delay: 500, backoff: "fixed" },
+    run: async () => {
+        await new Promise(r => setTimeout(r, 1000));
+        return { status: "success" };
+    },
+  },
+  {
+    name: "SecurityScan",
+    dependencies: ["InstallDependencies"],
+    run: async (ctx) => {
+      await new Promise(r => setTimeout(r, 600));
+      return ctx.securityVulnerabilities === 0
+        ? { status: "success" }
+        : { status: "failure", error: "Vulnerabilities found" };
+    },
+  },
+  {
+    name: "BuildBinary",
+    dependencies: ["Linting", "UnitTests"],
+    run: async (ctx) => {
+      await new Promise(r => setTimeout(r, 1200));
+      ctx.buildArtifact = "dist/bundle.js";
+      return { status: "success" };
+    },
+  },
+  {
+    name: "IntegrationTests",
+    dependencies: ["BuildBinary"],
+    run: async () => {
+        await new Promise(r => setTimeout(r, 1500));
+        return { status: "success" };
+    },
+  },
+  {
+    name: "UploadToS3",
+    dependencies: ["BuildBinary"],
+    condition: (ctx) => !!ctx.buildArtifact,
+    run: async () => {
+        await new Promise(r => setTimeout(r, 400));
+        return { status: "success" };
+    },
+  },
+  {
+    name: "DeployStaging",
+    dependencies: ["IntegrationTests", "SecurityScan"],
+    condition: (ctx) =>
+      ctx.environment === "staging" || ctx.environment === "production",
+    run: async () => {
+        await new Promise(r => setTimeout(r, 1000));
+        return { status: "success" };
+    },
+  },
+  {
+    name: "SmokeTestStaging",
+    dependencies: ["DeployStaging"],
+    run: async () => {
+        await new Promise(r => setTimeout(r, 500));
+        return { status: "success" };
+    },
+  },
+  {
+    name: "ApproveProduction",
+    dependencies: ["SmokeTestStaging"],
+    condition: (ctx) => ctx.branch === "main",
+    run: async () => {
+        await new Promise(r => setTimeout(r, 200)); // Quick check
+        return { status: "success" };
+    },
+  },
+  {
+    name: "DeployProduction",
+    dependencies: ["ApproveProduction"],
+    condition: (ctx) => ctx.environment === "production",
+    run: async () => {
+        await new Promise(r => setTimeout(r, 1500));
+        return { status: "success" };
+    },
+  },
+  {
+    name: "NotifySlack",
+    dependencies: ["DeployProduction"],
+    run: async () => {
+        await new Promise(r => setTimeout(r, 300));
+        return { status: "success" };
+    },
+  },
+];
+
+export default function WorkflowPage() {
+  const [logs, setLogs] = useState<string[]>([]);
+  const [graphDef, setGraphDef] = useState<string>("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [results, setResults] = useState<any>(null);
+
+  const runWorkflow = async () => {
+    setIsRunning(true);
+    setLogs([]);
+    setResults(null);
+    
+    // Add delays to the tasks for visual effect (already added above in run definitions)
+
+    const runner = new TaskRunnerBuilder(pipelineData)
+      .useStrategy(new RetryingExecutionStrategy(new StandardExecutionStrategy()))
+      .on("taskStart", ({ step }) => {
+        setLogs((prev) => [...prev, `🚀 Starting: ${step.name}`]);
+      })
+      .on("taskEnd", ({ step, result }) => {
+        setLogs((prev) => [...prev, `✅ Finished: ${step.name} [${result.status}]`]);
+      })
+      .build();
+
+    // Generate graph immediately to show structure
+    // We need to cast to any to access the static method if it's not exposed on the instance type definition
+    // Or check if the builder exposes it. The user said runner.constructor
+    try {
+        const mermaidGraph = (TaskRunnerBuilder as any).getMermaidGraph 
+            ? (TaskRunnerBuilder as any).getMermaidGraph(tasks) 
+            : (runner.constructor as any).getMermaidGraph(tasks);
+            
+        setGraphDef(mermaidGraph);
+    } catch (e) {
+        console.error("Could not generate graph", e);
+        setLogs((prev) => [...prev, `⚠️ Error generating graph: ${e}`]);
+    }
+
+    setLogs((prev) => [...prev, "--- Starting Workflow Execution ---"]);
+
+    try {
+        const res = await runner.execute(tasks, {
+            concurrency: 3,
+        });
+        setResults(Object.fromEntries(res));
+        setLogs((prev) => [...prev, "--- Workflow Execution Completed ---"]);
+    } catch (error) {
+        console.error("Execution failed", error);
+        setLogs((prev) => [...prev, `❌ Execution failed: ${error}`]);
+    } finally {
+        setIsRunning(false);
+    }
+  };
+
+  useEffect(() => {
+    runWorkflow();
+  }, []);
+
+  return (
+    <div className="p-8 space-y-8">
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">Workflow Dashboard</h1>
+        <button
+          onClick={runWorkflow}
+          disabled={isRunning}
+          className="px-4 py-2 bg-zinc-900 text-white dark:bg-zinc-50 dark:text-zinc-900 rounded-md disabled:opacity-50 font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+        >
+          {isRunning ? "Running..." : "Rerun Workflow"}
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Live Execution Log</h2>
+            <div className="bg-zinc-100 dark:bg-zinc-900 p-4 rounded-lg h-[500px] overflow-auto border border-zinc-200 dark:border-zinc-800 font-mono text-sm leading-relaxed">
+                {logs.length === 0 && <span className="text-zinc-400">Waiting to start...</span>}
+                {logs.map((log, i) => (
+                    <div key={i} className="border-b border-zinc-200/50 dark:border-zinc-800/50 pb-1 mb-1 last:border-0">
+                        {log}
+                    </div>
+                ))}
+            </div>
+        </div>
+
+        <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Dependency Graph</h2>
+            <WorkflowGraph graphDefinition={graphDef} />
+        </div>
+      </div>
+
+      {results && (
+        <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Final Results</h2>
+             <div className="overflow-x-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <table className="w-full text-sm text-left">
+                    <thead className="text-xs text-zinc-700 uppercase bg-zinc-50 dark:bg-zinc-800 dark:text-zinc-400">
+                        <tr>
+                            <th className="px-6 py-3">Task Name</th>
+                            <th className="px-6 py-3">Status</th>
+                            <th className="px-6 py-3">Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Object.entries(results).map(([name, result]: [string, any]) => (
+                            <tr key={name} className="bg-white border-b dark:bg-zinc-900 dark:border-zinc-800">
+                                <td className="px-6 py-4 font-medium">{name}</td>
+                                <td className="px-6 py-4">
+                                    <span className={`px-2 py-1 rounded-full text-xs ${
+                                        result.status === 'success' 
+                                            ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300'
+                                            : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                                    }`}>
+                                        {result.status}
+                                    </span>
+                                </td>
+                                <td className="px-6 py-4">
+                                    {result.message || JSON.stringify(result)}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+             </div>
+        </div>
+      )}
+    </div>
+  );
+}
