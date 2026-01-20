@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import {
   TaskRunnerBuilder,
   TaskStep,
@@ -9,16 +9,7 @@ import {
 } from "@calmo/task-runner";
 import { WorkflowGraph } from "@/components/workflow-graph";
 
-// 1. Define the Context based on a CI/CD scenario
-interface CIContext {
-  repoName: string;
-  branch: string;
-  filesChanged: string[];
-  testCoverage: number;
-  securityVulnerabilities: number;
-  buildArtifact?: string;
-  environment: "staging" | "production" | "none";
-}
+import { generateRandomWorkflow, CIContext } from "@/features/workflow/utils/workflow-generator";
 
 // 2. Local data to drive the logic
 const pipelineData: CIContext = {
@@ -30,115 +21,11 @@ const pipelineData: CIContext = {
   environment: "production",
 };
 
-// 3. Define the 10+ Tasks
-const tasks: TaskStep<CIContext>[] = [
-  {
-    name: "InstallDependencies",
-    run: async () => {
-        await new Promise(r => setTimeout(r, 800)); // Simulate work
-        return { status: "success", message: "npm install completed" };
-    },
-  },
-  {
-    name: "Linting",
-    dependencies: ["InstallDependencies"],
-    run: async () => {
-        await new Promise(r => setTimeout(r, 500));
-        return { status: "success" };
-    },
-  },
-  {
-    name: "UnitTests",
-    dependencies: ["InstallDependencies"],
-    retry: { attempts: 2, delay: 500, backoff: "fixed" },
-    run: async () => {
-        await new Promise(r => setTimeout(r, 1000));
-        return { status: "success" };
-    },
-  },
-  {
-    name: "SecurityScan",
-    dependencies: ["InstallDependencies"],
-    run: async (ctx) => {
-      await new Promise(r => setTimeout(r, 600));
-      return ctx.securityVulnerabilities === 0
-        ? { status: "success" }
-        : { status: "failure", error: "Vulnerabilities found" };
-    },
-  },
-  {
-    name: "BuildBinary",
-    dependencies: ["Linting", "UnitTests"],
-    run: async (ctx) => {
-      await new Promise(r => setTimeout(r, 1200));
-      ctx.buildArtifact = "dist/bundle.js";
-      return { status: "success" };
-    },
-  },
-  {
-    name: "IntegrationTests",
-    dependencies: ["BuildBinary"],
-    run: async () => {
-        await new Promise(r => setTimeout(r, 1500));
-        return { status: "success" };
-    },
-  },
-  {
-    name: "UploadToS3",
-    dependencies: ["BuildBinary"],
-    condition: (ctx) => !!ctx.buildArtifact,
-    run: async () => {
-        await new Promise(r => setTimeout(r, 400));
-        return { status: "success" };
-    },
-  },
-  {
-    name: "DeployStaging",
-    dependencies: ["IntegrationTests", "SecurityScan"],
-    condition: (ctx) =>
-      ctx.environment === "staging" || ctx.environment === "production",
-    run: async () => {
-        await new Promise(r => setTimeout(r, 1000));
-        return { status: "success" };
-    },
-  },
-  {
-    name: "SmokeTestStaging",
-    dependencies: ["DeployStaging"],
-    run: async () => {
-        await new Promise(r => setTimeout(r, 500));
-        return { status: "success" };
-    },
-  },
-  {
-    name: "ApproveProduction",
-    dependencies: ["SmokeTestStaging"],
-    condition: (ctx) => ctx.branch === "main",
-    run: async () => {
-        await new Promise(r => setTimeout(r, 200)); // Quick check
-        return { status: "success" };
-    },
-  },
-  {
-    name: "DeployProduction",
-    dependencies: ["ApproveProduction"],
-    condition: (ctx) => ctx.environment === "production",
-    run: async () => {
-        await new Promise(r => setTimeout(r, 1500));
-        return { status: "success" };
-    },
-  },
-  {
-    name: "NotifySlack",
-    dependencies: ["DeployProduction"],
-    run: async () => {
-        await new Promise(r => setTimeout(r, 300));
-        return { status: "success" };
-    },
-  },
-];
 
 export default function WorkflowPage() {
+  // Generate tasks once on mount
+  const tasks = useMemo(() => generateRandomWorkflow(15), []);
+
   const [logs, setLogs] = useState<string[]>([]);
   const [graphDef, setGraphDef] = useState<string>("");
   const [isRunning, setIsRunning] = useState(false);
