@@ -1,0 +1,7 @@
+- [ ] Implement `generateHugeWorkflow` in `workflow-generator.ts`
+- [ ] Implement `PerformanceShowcasePage` layout in `src/app/performance-showcase/page.tsx`
+- [ ] Add menu item to `AppSidebar` in `src/components/app-sidebar.tsx`
+- [ ] Connect `generateHugeWorkflow` to the page and wire up `TaskRunner` execution
+- [ ] Add performance timer and stats display
+- [ ] Verify functionality and responsiveness
+- [ ] Run `openspec validate` to ensure compliance

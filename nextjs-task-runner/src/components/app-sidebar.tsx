@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, Workflow, LayoutDashboard } from "lucide-react";
+import { Home, Workflow, LayoutDashboard, Zap } from "lucide-react";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ModeToggle } from "@/components/mode-toggle";
@@ -17,6 +17,7 @@ export function AppSidebar() {
   const links = [
     { href: "/", label: "Home", icon: Home },
     { href: "/workflow", label: "Workflow", icon: Workflow },
+    { href: "/performance-showcase", label: "Performance ShowCase", icon: Zap },
   ];
 
   return (
