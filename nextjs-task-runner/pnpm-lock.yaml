@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@calmo/task-runner':
-        specifier: ^3.8.3
-        version: 3.8.3
+        specifier: ^4.1.0
+        version: 4.1.0
       '@radix-ui/react-dropdown-menu':
         specifier: ^2.1.16
         version: 2.1.16(@types/react-dom@19.2.3(@types/react@19.2.8))(@types/react@19.2.8)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -211,8 +211,8 @@ packages:
   '@braintree/sanitize-url@7.1.1':
     resolution: {integrity: sha512-i1L7noDNxtFyL5DmZafWy1wRVhGehQmzZaz1HiN5e7iylJMSZR7ekOV7NsIqa5qBldlLrsKv4HbgFUVlQrz8Mw==}
 
-  '@calmo/task-runner@3.8.3':
-    resolution: {integrity: sha512-onKHn7GqSStFl2HExVNnOutN6HAMoGssDM7kIlAw0UcBl8Khmy+3SR7M4AVFnP1vvrwrrvvq5+Axt9gidcLCYg==}
+  '@calmo/task-runner@4.1.0':
+    resolution: {integrity: sha512-m03UpNKUCqipm9LyDMwZpTYovCNoVNeoV+8JazJf3Vp6NOMnBQYEmGQV8zgOopL+MTK+/JTsCp2ADvGS33k0CQ==}
 
   '@chevrotain/cst-dts-gen@11.0.3':
     resolution: {integrity: sha512-BvIKpRLeS/8UbfxXxgC33xOumsacaeCKAjAeLyOn7Pcp95HiRbrpl14S+9vaZLolnbssPIUuiUd8IvgkRyt6NQ==}
@@ -3748,7 +3748,7 @@ snapshots:
 
   '@braintree/sanitize-url@7.1.1': {}
 
-  '@calmo/task-runner@3.8.3': {}
+  '@calmo/task-runner@4.1.0': {}
 
   '@chevrotain/cst-dts-gen@11.0.3':
     dependencies:
