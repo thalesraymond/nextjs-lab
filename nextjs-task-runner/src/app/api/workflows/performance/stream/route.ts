@@ -1,10 +1,12 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import {
   TaskRunnerBuilder,
   StandardExecutionStrategy,
 } from "@calmo/task-runner";
-import { generateHugeWorkflow, CIContext } from "@/features/workflow/utils/workflow-generator";
+import {
+  generateHugeWorkflow,
+  CIContext,
+} from "@/features/workflow/utils/workflow-generator";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +22,7 @@ const pipelineData: CIContext = {
 
 export async function GET(request: NextRequest) {
   const encoder = new TextEncoder();
-  
+
   const stream = new ReadableStream({
     async start(controller) {
       const sendEvent = (data: any) => {
@@ -30,12 +32,12 @@ export async function GET(request: NextRequest) {
       try {
         // Generate tasks
         const tasks = generateHugeWorkflow(10000);
-        
+
         // Initial stats
         sendEvent({
-           type: "init",
-           total: tasks.length,
-           timestamp: Date.now()
+          type: "init",
+          total: tasks.length,
+          timestamp: Date.now(),
         });
 
         // Batching state
@@ -43,45 +45,54 @@ export async function GET(request: NextRequest) {
         let success = 0;
         let failure = 0;
         let lastUnknownUpdate = Date.now();
-        
-        // We can't easily batch events from the emitter without a buffer, 
+
+        // We can't easily batch events from the emitter without a buffer,
         // but for 1M nodes, the runner emits synchronous events very fast for the short tasks.
         // We will throttle updates to the stream to every ~50ms to avoid network congestion.
-        
+
         let pendingUpdates = {
-            runningDelta: 0,
-            successDelta: 0,
-            failureDelta: 0
+          runningDelta: 0,
+          successDelta: 0,
+          failureDelta: 0,
         };
 
         const flushUpdates = () => {
-            if (pendingUpdates.runningDelta === 0 && pendingUpdates.successDelta === 0 && pendingUpdates.failureDelta === 0) return;
-            
-            sendEvent({
-                type: "update",
-                runningDelta: pendingUpdates.runningDelta,
-                successDelta: pendingUpdates.successDelta,
-                failureDelta: pendingUpdates.failureDelta,
-                timestamp: Date.now()
-            });
+          if (
+            pendingUpdates.runningDelta === 0 &&
+            pendingUpdates.successDelta === 0 &&
+            pendingUpdates.failureDelta === 0
+          )
+            return;
 
-            pendingUpdates = { runningDelta: 0, successDelta: 0, failureDelta: 0 };
+          sendEvent({
+            type: "update",
+            runningDelta: pendingUpdates.runningDelta,
+            successDelta: pendingUpdates.successDelta,
+            failureDelta: pendingUpdates.failureDelta,
+            timestamp: Date.now(),
+          });
+
+          pendingUpdates = {
+            runningDelta: 0,
+            successDelta: 0,
+            failureDelta: 0,
+          };
         };
 
         const runner = new TaskRunnerBuilder(pipelineData)
           .useStrategy(new StandardExecutionStrategy())
           .on("taskStart", () => {
-             pendingUpdates.runningDelta++;
-             checkFlush();
+            pendingUpdates.runningDelta++;
+            checkFlush();
           })
           .on("taskEnd", ({ result }) => {
-             pendingUpdates.runningDelta--;
-             if (result.status === 'success') {
-                 pendingUpdates.successDelta++;
-             } else {
-                 pendingUpdates.failureDelta++;
-             }
-             checkFlush();
+            pendingUpdates.runningDelta--;
+            if (result.status === "success") {
+              pendingUpdates.successDelta++;
+            } else {
+              pendingUpdates.failureDelta++;
+            }
+            checkFlush();
           })
           // We might miss the workflowStart/End here if we don't return the promise from runner.execute
           // but we are inside the stream start.
@@ -90,20 +101,20 @@ export async function GET(request: NextRequest) {
         // Simple throttling
         let lastFlush = Date.now();
         const checkFlush = () => {
-            const now = Date.now();
-            if (now - lastFlush > 50) {
-                flushUpdates();
-                lastFlush = now;
-            }
+          const now = Date.now();
+          if (now - lastFlush > 50) {
+            flushUpdates();
+            lastFlush = now;
+          }
         };
 
         await runner.execute(tasks, {
-            concurrency: 500, // Reasonable server load
+          concurrency: 1000, // Reasonable server load
         });
-        
+
         // Final flush
         flushUpdates();
-        
+
         sendEvent({ type: "done", timestamp: Date.now() });
         controller.close();
       } catch (error) {
@@ -118,7 +129,7 @@ export async function GET(request: NextRequest) {
     headers: {
       "Content-Type": "text/event-stream",
       "Cache-Control": "no-cache",
-      "Connection": "keep-alive",
+      Connection: "keep-alive",
     },
   });
 }
