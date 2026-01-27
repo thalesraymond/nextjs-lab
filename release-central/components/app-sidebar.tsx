@@ -2,13 +2,12 @@ import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Calendar, Home } from "lucide-react";
+import { Calendar, Home, Gamepad } from "lucide-react";
 import Link from "next/link";
 
 const items = [
@@ -21,6 +20,11 @@ const items = [
     title: "calendário",
     url: "/calendar",
     icon: Calendar,
+  },
+  {
+    title: "game",
+    url: "/game",
+    icon: Gamepad,
   },
 ];
 
