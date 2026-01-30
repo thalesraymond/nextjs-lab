@@ -1,14 +1,17 @@
 <!-- OPENSPEC:START -->
+
 # OpenSpec Instructions
 
 These instructions are for AI assistants working in this project.
 
 Always open `@/openspec/AGENTS.md` when the request:
+
 - Mentions planning or proposals (words like proposal, spec, change, plan)
 - Introduces new capabilities, breaking changes, architecture shifts, or big performance/security work
 - Sounds ambiguous and you need the authoritative spec before coding
 
 Use `@/openspec/AGENTS.md` to learn:
+
 - How to create and apply change proposals
 - Spec format and conventions
 - Project structure and guidelines
@@ -30,38 +33,43 @@ This document outlines the core principles and practices for developing in this 
 
 ## Project Structure & Conventions
 
-*   **App Router**: We use the App Router (`app/` directory).
-*   **File Naming**: Use `kebab-case` for file and directory names (e.g., `my-component.tsx`, `components/ui/button.tsx`).
-*   **Colocation**: Colocate components, tests, and styles closely related to specific features or pages where possible, but use the `components/` folder for shared UI elements.
-*   **Shadcn UI**: We use Shadcn UI for our component library. Reusable UI components go in `components/ui`.
+- **App Router**: We use the App Router (`app/` directory).
+- **File Naming**: Use `kebab-case` for file and directory names (e.g., `my-component.tsx`, `components/ui/button.tsx`).
+- **Colocation**: Colocate components, tests, and styles closely related to specific features or pages where possible, but use the `components/` folder for shared UI elements.
+- **Shadcn UI**: We use Shadcn UI for our component library. Reusable UI components go in `components/ui`.
 
 ## Styling
 
-*   **Tailwind CSS**: Use Tailwind CSS for styling. Avoid writing custom CSS files or modules unless absolutely necessary for complex animations or legacy integration.
-*   **Class Sorting**: Use the official Tailwind prettier plugin to keep class names sorted and consistent.
-*   **Responsiveness**: Design mobile-first using Tailwind's breakpoints (e.g., `md:flex`, `lg:grid`).
+- **Tailwind CSS**: Use Tailwind CSS for styling. Avoid writing custom CSS files or modules unless absolutely necessary for complex animations or legacy integration.
+- **Class Sorting**: Use the official Tailwind prettier plugin to keep class names sorted and consistent.
+- **Responsiveness**: Design mobile-first using Tailwind's breakpoints (e.g., `md:flex`, `lg:grid`).
 
 ## Navigation
 
-*   **`<Link>` Component**: Always use the Next.js `<Link>` component for internal navigation to avoid full page reloads.
-*   **Router Hooks**: Use `useRouter`, `usePathname`, and `useSearchParams` from `next/navigation` only inside Client Components.
+- **`<Link>` Component**: Always use the Next.js `<Link>` component for internal navigation to avoid full page reloads.
+- **Router Hooks**: Use `useRouter`, `usePathname`, and `useSearchParams` from `next/navigation` only inside Client Components.
 
 ## Performance
 
-*   **Images**: Use the `next/image` component for images to benefit from automatic optimization, lazy loading, and sizing.
-*   **Fonts**: Use `next/font` to optimize fonts and prevent Layout Shift.
-*   **Lazy Loading**: Use `next/dynamic` or `React.lazy` for heavy client components that are not immediately visible.
+- **Images**: Use the `next/image` component for images to benefit from automatic optimization, lazy loading, and sizing.
+- **Fonts**: Use `next/font` to optimize fonts and prevent Layout Shift.
+- **Lazy Loading**: Use `next/dynamic` or `React.lazy` for heavy client components that are not immediately visible.
 
 ## State Management
 
-*   **Server State**: Prefer fetching data on the server.
-*   **Client State**: For local UI state, `useState` and `useReducer` are sufficient.
-*   **Global State**: If global client state is needed, consider React Context or lightweight libraries like Zustand, but use sparingly.
+- **Server State**: Prefer fetching data on the server.
+- **Client State**: For local UI state, `useState` and `useReducer` are sufficient.
+- **Global State**: If global client state is needed, consider React Context or lightweight libraries like Zustand, but use sparingly.
 
 ## Testing
 
-*   **Unit Tests**: Write unit tests for utility functions and complex components.
-*   **E2E Tests**: Use Playwright or Cypress for critical user flows.
+- **Unit Tests**: Write unit tests for utility functions and complex components.
+- **E2E Tests**: Use Playwright or Cypress for critical user flows.
+
+## Context7 MCP
+
+Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
 
 ---
-*Last Updated: January 2026*
+
+_Last Updated: January 2026_
