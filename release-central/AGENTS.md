@@ -35,6 +35,26 @@ This document outlines the core principles and practices for developing in this 
 *   **Colocation**: Colocate components, tests, and styles closely related to specific features or pages where possible, but use the `components/` folder for shared UI elements.
 *   **Shadcn UI**: We use Shadcn UI for our component library. Reusable UI components go in `components/ui`.
 
+## Design System & Component Architecture
+
+We follow a modified Atomic Design methodology to organize our components:
+
+1.  **Atoms (`components/ui` & `components/icons`)**:
+    *   Basic building blocks of the UI.
+    *   Examples: Buttons, Inputs, Labels, Icons.
+    *   These are primarily Shadcn UI primitives.
+
+2.  **Molecules (`components/molecules`)**:
+    *   Simple groups of UI elements functioning together as a unit.
+    *   Examples: SearchBar (Input + Button), UserCard (Avatar + Text).
+
+3.  **Organisms (`components/organisms`)**:
+    *   Relatively complex components that form distinct sections of an interface.
+    *   Examples: AppSidebar, Navbar, Footer, DataTables with filters.
+
+4.  **Templates/Pages (`app/`)**:
+    *   Page-level structures that place components into a layout.
+
 ## Styling
 
 *   **Tailwind CSS**: Use Tailwind CSS for styling. Avoid writing custom CSS files or modules unless absolutely necessary for complex animations or legacy integration.
