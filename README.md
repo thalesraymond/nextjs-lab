@@ -1,2 +1,2 @@
 # nextjs-lab
-studies for nextjs
+studies for Next.js
