@@ -18,6 +18,7 @@ export interface SquadScore {
   community: string;
   delivery_items: DeliveryItem[];
   score_events: ScoreEvents[];
+  events: GameEvent[];
 }
 
 export interface GameStats {
@@ -25,4 +26,11 @@ export interface GameStats {
   pontuacao_media: number;
   squads_scores: SquadScore[];
   score_events: ScoreEvents[];
+}
+
+export interface GameEvent {
+  type: string;
+  date: string;
+  incident_number?: string;
+  issue_number?: number;
 }
