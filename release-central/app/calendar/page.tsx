@@ -31,7 +31,7 @@ const mockData: Release[] = [
     gmud: "CHG0001234",
     packageCount: 12,
     legalDemands: 2,
-  },
+  }, 
   {
     id: 2,
     platform: "ios",
@@ -66,22 +66,22 @@ const mockData: Release[] = [
     dateLimit: "2024-03-15",
     gmud: "CHG0003456",
     packageCount: 20,
-    legalDemands: 5,
-  },
-]
-
-export default function Calendar() {
-  return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">Calendário de Releases</h1>
-      <Table>
-        <TableCaption>A lista de releases agendadas.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Plataforma</TableHead>
-            <TableHead>Versão</TableHead>
-            <TableHead>Data Limite</TableHead>
-            <TableHead>GMUD</TableHead>
+      legalDemands: 5,
+    },
+  ]
+  
+  export default function Calendar() {
+    return (
+      <div className="p-4">
+        <h1 className="text-2xl font-bold mb-4">Calendário de Releases</h1>
+        <Table>
+          <TableCaption>A lista de releases agendadas.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Plataforma</TableHead>
+              <TableHead>Versão</TableHead>
+              <TableHead>Data Limite</TableHead>
+              <TableHead>GMUD</TableHead>
             <TableHead>Quantidade de Pacotes</TableHead>
             <TableHead>Demandas Legais</TableHead>
           </TableRow>
