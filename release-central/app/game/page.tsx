@@ -1,6 +1,7 @@
 import { mockGameStats } from "./data";
 import { KPIHeader } from "./_components/kpi-header";
 import { TimelineChart } from "./_components/timeline-chart";
+import { AchievementsList } from "./_components/achievements-list";
 
 export default function GamePage() {
   return (
@@ -11,6 +12,7 @@ export default function GamePage() {
       <div className="space-y-4">
         <KPIHeader stats={mockGameStats} />
         <TimelineChart stats={mockGameStats} />
+        <AchievementsList achievements={mockGameStats.achievements} />
       </div>
     </div>
   );

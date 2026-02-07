@@ -1,4 +1,4 @@
-import { GameEvent, GameStats, SquadScore, DeliveryItem, ScoreEvents } from "../types";
+import { GameEvent, GameStats, SquadScore, DeliveryItem, ScoreEvents, Achievement } from "../types";
 
 interface GenerateParams {
   squadsCount?: number;
@@ -47,6 +47,39 @@ function generateScoreEvents(): ScoreEvents {
   };
 }
 
+function generateAchievements(): Achievement[] {
+  return [
+    {
+      id: "1",
+      name: "Bug Hunter",
+      description: "Resolved more than 10 production incidents in a single season.",
+      iconName: "Bug",
+      percentage: randomInt(60, 95),
+    },
+    {
+      id: "2",
+      name: "Clean Code Architect",
+      description: "Completed 50+ code reviews with zero reverts requested.",
+      iconName: "Code",
+      percentage: randomInt(30, 60),
+    },
+    {
+      id: "3",
+      name: "Speed Demon",
+      description: "Merged a critical fix within 1 hour of incident report.",
+      iconName: "Zap",
+      percentage: randomInt(10, 30),
+    },
+    {
+      id: "4",
+      name: "Zero Downtime Legend",
+      description: "Maintained 100% uptime during major release train.",
+      iconName: "ShieldCheck",
+      percentage: randomInt(1, 15),
+    },
+  ];
+}
+
 export function generateGameStats({
   squadsCount = 2,
   deliveriesPerSquad = 10,
@@ -80,5 +113,6 @@ export function generateGameStats({
     pontuacao_media: randomInt(10000, 50000),
     squads_scores,
     score_events: [globalEvents],
+    achievements: generateAchievements(),
   };
 }

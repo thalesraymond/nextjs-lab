@@ -26,6 +26,15 @@ export interface GameStats {
   pontuacao_media: number;
   squads_scores: SquadScore[];
   score_events: ScoreEvents[];
+  achievements: Achievement[];
+}
+
+export interface Achievement {
+  id: string;
+  name: string;
+  description: string;
+  iconName: string;
+  percentage: number;
 }
 
 export interface GameEvent {
