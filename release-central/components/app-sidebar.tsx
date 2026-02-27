@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Calendar, Home, Gamepad } from "lucide-react";
+import { Calendar, Home, Gamepad, Activity } from "lucide-react";
 import Link from "next/link";
 
 const items = [
@@ -25,6 +25,11 @@ const items = [
     title: "game",
     url: "/game",
     icon: Gamepad,
+  },
+  {
+    title: "vitals",
+    url: "/vitals",
+    icon: Activity,
   },
 ];
 

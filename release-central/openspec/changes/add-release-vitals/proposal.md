@@ -6,6 +6,7 @@ To provide a consolidated "cockpit" view of release health, allowing teams to mo
 ## What Changes
 - Add a new `/vitals` route.
 - Add components to display version lists, rollout status, performance vitals (crash-free rate, ANR, hang rate), and user ratings/comments.
+- Add a secondary sidebar to select between the current released version and active older versions.
 - Keep data mocked and local for now, structuring the data model so API integration later is straightforward.
 
 ## Impact

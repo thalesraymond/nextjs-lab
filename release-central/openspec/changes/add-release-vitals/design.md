@@ -9,6 +9,7 @@ We need a "Release Vitals" page acting as a cockpit for the current release heal
 - Decision: Use the `app/vitals` route to house the application.
 - Decision: Define `mockVitalsData` in `app/vitals/data.ts` to simulate an API response containing rollout metrics, KPIs, and comments. This prepares the structure for real integration.
 - Decision: Create specific internal components within `app/vitals/_components/` such as `VersionList`, `RolloutStatus`, `VitalsKPIs`, and `UserFeedback`. Use Shadcn-like existing primitives from `components/ui`.
+- Decision: Layout will include a secondary sidebar to switch between app versions, keeping the main page context bound to the selected version.
 
 ## Risks / Trade-offs
 - Risk: Creating too many custom layout components that drift from the design system.

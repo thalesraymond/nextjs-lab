@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Gamepad, Calendar } from "lucide-react";
+import { Gamepad, Calendar, Activity } from "lucide-react";
 
 export default function Home() {
   return (
@@ -25,7 +25,7 @@ export default function Home() {
         </div>
 
         {/* Action Buttons */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl mt-8">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 w-full max-w-4xl mt-8">
           <Link
             href="/game"
             className="group relative flex flex-col items-center justify-center gap-4 p-8 rounded-xl border border-primary/30 bg-card/50 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-card hover:border-primary hover:shadow-[0_0_30px_-5px_var(--color-primary)] overflow-hidden"
@@ -50,6 +50,19 @@ export default function Home() {
               <h2 className="text-2xl font-bold tracking-tight text-gray-100 group-hover:text-white transition-colors">Calendar</h2>
               <p className="text-sm text-muted-foreground group-hover:text-gray-300 transition-colors">
                 Track upcoming releases and GMUDs
+              </p>
+            </div>
+          </Link>
+          <Link
+            href="/vitals"
+            className="group relative flex flex-col items-center justify-center gap-4 p-8 rounded-xl border border-border/50 bg-card/30 backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:bg-card/80 hover:border-emerald-500/50 hover:shadow-[0_0_30px_-5px_rgba(16,185,129,0.2)] overflow-hidden"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <Activity className="w-12 h-12 text-emerald-400 group-hover:scale-110 transition-all duration-300 relative z-10" />
+            <div className="space-y-1 relative z-10">
+              <h2 className="text-2xl font-bold tracking-tight text-gray-100 group-hover:text-white transition-colors">Vitals</h2>
+              <p className="text-sm text-muted-foreground group-hover:text-gray-300 transition-colors">
+                Cockpit view of rollout health
               </p>
             </div>
           </Link>

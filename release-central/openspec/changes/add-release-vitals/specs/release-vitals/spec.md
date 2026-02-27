@@ -30,3 +30,10 @@ The dashboard SHALL present user ratings and recent comments to gauge user satis
 #### Scenario: Read user comments
 - **WHEN** scrolling to the feedback section
 - **THEN** the average user rating and a list of mocked user comments are displayed.
+
+### Requirement: Version Selection
+The dashboard SHALL provide a secondary sidebar to allow users to select between the current released version and older active versions.
+
+#### Scenario: Select an older version
+- **WHEN** the user selects an older active version from the secondary sidebar
+- **THEN** the dashboard updates to display the release vitals specific to the selected version.
