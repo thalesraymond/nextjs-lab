@@ -80,7 +80,7 @@ export function TimelineChart({ stats }: TimelineChartProps) {
   }, [stats]);
 
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-4 border-border/50 bg-card/50 backdrop-blur-sm">
       <CardHeader>
         <CardTitle>Timeline de Entregas</CardTitle>
       </CardHeader>
@@ -114,7 +114,7 @@ export function TimelineChart({ stats }: TimelineChartProps) {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload as ChartDataPoint;
                     return (
-                      <div className="rounded-lg border bg-background p-2 shadow-sm">
+                      <div className="rounded-lg border border-primary/20 bg-background/95 backdrop-blur-md p-3 shadow-[0_0_15px_-3px_rgba(0,0,0,0.5)]">
                         <div className="grid grid-cols-2 gap-2">
                           <div className="flex flex-col">
                             <span className="text-[0.70rem] uppercase text-muted-foreground">
