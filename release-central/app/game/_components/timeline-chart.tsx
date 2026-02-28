@@ -53,7 +53,8 @@ export function TimelineChart({ stats }: TimelineChartProps) {
     // Aggregate Deliveries
     stats.squads_scores.forEach((squad) => {
       squad.delivery_items.forEach((item) => {
-        const date = new Date(item.updated_at).toISOString().split("T")[0];
+        // Optimize date extraction, avoid new Date() instantiation
+        const date = item.updated_at.substring(0, 10);
         const point = getDataPoint(date);
         point.deliveries += 1;
       });
@@ -62,7 +63,8 @@ export function TimelineChart({ stats }: TimelineChartProps) {
     // Aggregate Events
     stats.squads_scores.forEach((squad) => {
       squad.events.forEach((event) => {
-        const date = new Date(event.date).toISOString().split("T")[0];
+        // Optimize date extraction, avoid new Date() instantiation
+        const date = event.date.substring(0, 10);
         const point = getDataPoint(date);
         if (point.events[event.type] !== undefined) {
           point.events[event.type] += 1;
@@ -96,8 +98,17 @@ export function TimelineChart({ stats }: TimelineChartProps) {
                 tickLine={false}
                 axisLine={false}
                 tickFormatter={(value) => {
-                  const date = new Date(value);
-                  return `${date.getDate()}/${date.getMonth() + 1}`;
+                  // value is in YYYY-MM-DD format
+                  // avoid new Date(value) for better performance and to prevent timezone off-by-one bugs
+                  const parts = value.split("-");
+                  if (parts.length === 3) {
+                    // Extract DD/MM, removing leading zeros for day and month if desired,
+                    // or keeping them. We match previous behavior (e.g. "5/2" instead of "05/02")
+                    const month = parseInt(parts[1], 10);
+                    const day = parseInt(parts[2], 10);
+                    return `${day}/${month}`;
+                  }
+                  return value;
                 }}
               />
               <YAxis
