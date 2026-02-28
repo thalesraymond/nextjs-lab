@@ -86,14 +86,45 @@ export function generateGameStats({
   eventsPerSquad = 5,
   daysRange = 30,
 }: GenerateParams = {}): GameStats {
-  const squads_scores: SquadScore[] = Array.from({ length: squadsCount }).map((_, i) => ({
-    squad: `Squad ${String.fromCharCode(65 + i)}`,
-    release_train: `Release Train ${String.fromCharCode(65 + i)}`,
-    community: `Community ${String.fromCharCode(65 + i)}`,
-    delivery_items: generateDeliveryItems(deliveriesPerSquad, daysRange),
-    score_events: [generateScoreEvents()],
-    events: generateGameEvents(eventsPerSquad, daysRange),
-  }));
+  const initialSquads: Omit<SquadScore, 'position' | 'tier'>[] = Array.from({ length: squadsCount }).map((_, i) => {
+    const deliveries = generateDeliveryItems(deliveriesPerSquad, daysRange);
+    const events = generateGameEvents(eventsPerSquad, daysRange);
+    const scoreEvents = generateScoreEvents();
+    const totalPoints = randomInt(1000, 100000);
+    return {
+      squad: `Squad ${i + 1}`,
+      release_train: `Release Train ${String.fromCharCode(65 + (i % 5))}`,
+      community: `Community ${String.fromCharCode(65 + (i % 3))}`,
+      total_points: totalPoints,
+      total_deliveries: deliveries.length,
+      total_events: events.length,
+      historical_position: 0, // Will be set after sorting
+      delivery_items: deliveries,
+      score_events: [scoreEvents],
+      events,
+    };
+  });
+
+  // Sort by points descending to assign positions
+  initialSquads.sort((a, b) => b.total_points - a.total_points);
+
+  const totalSquads = initialSquads.length;
+  const squads_scores: SquadScore[] = initialSquads.map((squad, index) => {
+    const position = index + 1;
+    let tier = 5;
+    const percentile = (position / totalSquads) * 100;
+
+    if (percentile <= 15) tier = 1;
+    else if (percentile <= 35) tier = 2; // 15 + 20
+    else if (percentile <= 65) tier = 3; // 35 + 30
+    else if (percentile <= 85) tier = 4; // 65 + 20
+    else tier = 5; // Bottom 15
+
+    // Randomize historical position to show up/down deltas
+    const historical_position = Math.max(1, position + randomInt(-3, 3));
+
+    return { ...squad, position, historical_position, tier };
+  });
 
   const globalEvents = squads_scores.reduce(
     (acc, squad) => {

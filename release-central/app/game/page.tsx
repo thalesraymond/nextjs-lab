@@ -2,6 +2,7 @@ import { mockGameStats } from "./data";
 import { KPIHeader } from "./_components/kpi-header";
 import { TimelineChart } from "./_components/timeline-chart";
 import { AchievementsList } from "./_components/achievements-list";
+import { SquadRankingsTable } from "./_components/squad-rankings-table";
 
 export default function GamePage() {
   return (
@@ -15,6 +16,7 @@ export default function GamePage() {
         <KPIHeader stats={mockGameStats} />
         <TimelineChart stats={mockGameStats} />
         <AchievementsList achievements={mockGameStats.achievements} />
+        <SquadRankingsTable squads={mockGameStats.squads_scores} />
       </div>
     </div>
   );

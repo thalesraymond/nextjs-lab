@@ -16,6 +16,12 @@ export interface SquadScore {
   squad: string;
   release_train: string;
   community: string;
+  total_points: number;
+  total_deliveries: number;
+  total_events: number;
+  position: number;
+  historical_position: number;
+  tier: number;
   delivery_items: DeliveryItem[];
   score_events: ScoreEvents[];
   events: GameEvent[];
