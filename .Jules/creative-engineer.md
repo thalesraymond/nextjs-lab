@@ -1,0 +1,3 @@
+## 2024-05-15 - [Add Copy to Clipboard for Technical IDs]
+**Learning:** GMUDs (Global Mudanças - change records) and application versions are crucial technical identifiers heavily referenced in the dashboard that currently require manual highlighting to copy. This frequent workflow action adds friction to the user's daily tasks.
+**Action:** Implemented a unified `CopyButton` utility and integrated it specifically alongside GMUD numbers in the Calendar and Version strings in the Vitals page to accelerate cross-referencing and communication workflows.

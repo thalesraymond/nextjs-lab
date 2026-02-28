@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CopyButton } from "@/components/ui/copy-button";
 import { VitalsStats } from "../data";
 
 export function VersionList({ stats }: { stats: VitalsStats }) {
@@ -28,7 +29,12 @@ export function VersionList({ stats }: { stats: VitalsStats }) {
           <TableBody>
             {stats.recentVersions.map((v) => (
               <TableRow key={v.version} className="border-border/50 hover:bg-accent/30">
-                <TableCell className="font-medium">{v.version}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    <span>{v.version}</span>
+                    <CopyButton text={v.version} title="Copy Version" />
+                  </div>
+                </TableCell>
                 <TableCell>
                   <span className={`px-2 py-0.5 rounded-full text-xs border ${
                     v.status === 'active' 

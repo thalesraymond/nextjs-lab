@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table"
 import { AndroidLogo } from "@/components/icons/android-logo"
 import { AppleLogo } from "@/components/icons/apple-logo"
+import { CopyButton } from "@/components/ui/copy-button"
 
 type Platform = "android" | "ios"
 
@@ -108,7 +109,12 @@ const mockData: Release[] = [
               </TableCell>
               <TableCell className="font-mono text-sm group-hover:text-white transition-colors">v{release.version}</TableCell>
               <TableCell className="text-muted-foreground group-hover:text-gray-300 transition-colors">{release.dateLimit}</TableCell>
-              <TableCell className="font-mono text-xs text-primary/80 bg-primary/10 px-2 py-1 rounded inline-block mt-2 border border-primary/20">{release.gmud}</TableCell>
+              <TableCell className="font-mono text-xs">
+                <div className="flex items-center gap-1.5 inline-flex bg-primary/10 px-2 py-1 rounded border border-primary/20 text-primary/80">
+                  <span>{release.gmud}</span>
+                  <CopyButton text={release.gmud} className="p-0.5 hover:bg-primary/20 text-primary/80" title="Copy GMUD" />
+                </div>
+              </TableCell>
               <TableCell className="text-right font-bold text-gray-300">{release.packageCount}</TableCell>
               <TableCell className="text-right">
                 {release.legalDemands > 0 ? (
