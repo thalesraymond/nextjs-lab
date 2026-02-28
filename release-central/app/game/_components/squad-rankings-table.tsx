@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { SquadScore } from "../types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ChevronUp, ChevronDown, Minus } from "lucide-react";
+import { ChevronUp, ChevronDown, Minus, Search } from "lucide-react";
 import { SquadDetailsSheet } from "./squad-details-sheet";
+import { Input } from "@/components/ui/input";
 
 interface SquadRankingsTableProps {
   squads: SquadScore[];
@@ -12,6 +13,7 @@ interface SquadRankingsTableProps {
 
 export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
   const [selectedSquad, setSelectedSquad] = useState<SquadScore | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const getTierColor = (tier: number) => {
     switch (tier) {
@@ -55,11 +57,30 @@ export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
     );
   };
 
+  const filteredSquads = squads.filter((squad) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      squad.squad.toLowerCase().includes(searchLower) ||
+      squad.release_train.toLowerCase().includes(searchLower) ||
+      squad.community.toLowerCase().includes(searchLower)
+    );
+  });
+
   return (
     <>
       <div className="border rounded-lg bg-card/50 backdrop-blur shadow-sm">
-        <div className="p-4 border-b">
+        <div className="p-4 border-b flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h3 className="text-xl font-bold">Resumo das Squads</h3>
+          <div className="relative w-full sm:w-72">
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              type="search"
+              placeholder="Buscar por Squad, Train ou Comunidade..."
+              className="w-full bg-black/40 pl-9 border-primary/20 focus-visible:ring-primary/30"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
         <div className="overflow-x-auto">
           <Table>
@@ -76,30 +97,38 @@ export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {squads.map((squad) => (
-                <TableRow 
-                  key={squad.squad} 
-                  className="cursor-pointer hover:bg-muted/50 transition-colors"
-                  onClick={() => setSelectedSquad(squad)}
-                >
-                  <TableCell className="text-center font-bold text-lg">{squad.position}º</TableCell>
-                  <TableCell className="flex justify-center">
-                    {renderDelta(squad.position, squad.historical_position)}
-                  </TableCell>
-                  <TableCell className="font-semibold">{squad.squad}</TableCell>
-                  <TableCell className="text-muted-foreground">{squad.release_train}</TableCell>
-                  <TableCell className="text-muted-foreground">{squad.community}</TableCell>
-                  <TableCell className="text-right font-bold text-primary">
-                    {squad.total_points.toLocaleString("pt-BR")}
-                  </TableCell>
-                  <TableCell className="text-right">{squad.total_deliveries}</TableCell>
-                  <TableCell className="text-center">
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getTierColor(squad.tier)}`}>
-                      Tier {squad.tier}
-                    </span>
+              {filteredSquads.length > 0 ? (
+                filteredSquads.map((squad) => (
+                  <TableRow
+                    key={squad.squad}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={() => setSelectedSquad(squad)}
+                  >
+                    <TableCell className="text-center font-bold text-lg">{squad.position}º</TableCell>
+                    <TableCell className="flex justify-center">
+                      {renderDelta(squad.position, squad.historical_position)}
+                    </TableCell>
+                    <TableCell className="font-semibold">{squad.squad}</TableCell>
+                    <TableCell className="text-muted-foreground">{squad.release_train}</TableCell>
+                    <TableCell className="text-muted-foreground">{squad.community}</TableCell>
+                    <TableCell className="text-right font-bold text-primary">
+                      {squad.total_points.toLocaleString("pt-BR")}
+                    </TableCell>
+                    <TableCell className="text-right">{squad.total_deliveries}</TableCell>
+                    <TableCell className="text-center">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-bold border ${getTierColor(squad.tier)}`}>
+                        Tier {squad.tier}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={8} className="h-24 text-center text-muted-foreground">
+                    Nenhuma squad encontrada buscando por &quot;{searchTerm}&quot;.
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>
