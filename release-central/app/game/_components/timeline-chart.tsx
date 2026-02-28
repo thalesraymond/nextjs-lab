@@ -54,7 +54,7 @@ export function TimelineChart({ stats }: TimelineChartProps) {
     stats.squads_scores.forEach((squad) => {
       squad.delivery_items.forEach((item) => {
         // Optimize date extraction, avoid new Date() instantiation
-        const date = item.updated_at.split("T")[0];
+        const date = item.updated_at.substring(0, 10);
         const point = getDataPoint(date);
         point.deliveries += 1;
       });
