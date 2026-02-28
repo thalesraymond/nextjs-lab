@@ -64,7 +64,7 @@ export function TimelineChart({ stats }: TimelineChartProps) {
     stats.squads_scores.forEach((squad) => {
       squad.events.forEach((event) => {
         // Optimize date extraction, avoid new Date() instantiation
-        const date = event.date.split("T")[0];
+        const date = event.date.substring(0, 10);
         const point = getDataPoint(date);
         if (point.events[event.type] !== undefined) {
           point.events[event.type] += 1;
