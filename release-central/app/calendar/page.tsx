@@ -85,13 +85,13 @@ export default function Calendar() {
   const [sortColumn, setSortColumn] = useState<SortColumn>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
 
-  const filteredData = mockData.filter(
+  const filteredData = useMemo(() => mockData.filter(
     (release) =>
       release.gmud.toLowerCase().includes(searchTerm.toLowerCase()) ||
       release.version.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  ), [searchTerm])
 
-  const sortedData = [...filteredData].sort((a, b) => {
+  const sortedData = useMemo(() => [...filteredData].sort((a, b) => {
     if (!sortColumn) return 0
 
     const aValue = a[sortColumn]
@@ -100,7 +100,7 @@ export default function Calendar() {
     if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
     if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
     return 0
-  })
+  }), [filteredData, sortColumn, sortDirection])
 
   const handleSort = (column: SortColumn) => {
     if (sortColumn === column) {
