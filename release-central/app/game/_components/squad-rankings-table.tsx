@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { SquadScore } from "../types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ChevronUp, ChevronDown, Minus, Search } from "lucide-react";
@@ -57,14 +57,16 @@ export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
     );
   };
 
-  const filteredSquads = squads.filter((squad) => {
+  // ⚡ Bolt: Cache filtered squads to prevent O(N) recalculation on every render (e.g. when opening the details sheet).
+  // Also hoisted searchTerm.toLowerCase() outside the loop to avoid redundant string conversions.
+  const filteredSquads = useMemo(() => {
     const searchLower = searchTerm.toLowerCase();
-    return (
+    return squads.filter((squad) => (
       squad.squad.toLowerCase().includes(searchLower) ||
       squad.release_train.toLowerCase().includes(searchLower) ||
       squad.community.toLowerCase().includes(searchLower)
-    );
-  });
+    ));
+  }, [squads, searchTerm]);
 
   return (
     <>
