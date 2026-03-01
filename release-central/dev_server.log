@@ -7,7 +7,6 @@
 - Network:       http://192.168.0.2:3000
 
 ✓ Starting...
-✓ Ready in 1125ms
-○ Compiling /vitals ...
- GET /vitals 200 in 5.7s (compile: 4.4s, render: 1226ms)
- GET /vitals 200 in 341ms (compile: 6ms, render: 335ms)
+✓ Ready in 1098ms
+○ Compiling /calendar ...
+ GET /calendar 200 in 4.9s (compile: 4.0s, render: 846ms)

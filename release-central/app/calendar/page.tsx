@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Search } from "lucide-react"
+import { Search, ChevronDown, ChevronUp } from "lucide-react"
 import { Input } from "@/components/ui/input"
 
 import {
@@ -77,14 +77,44 @@ const mockData: Release[] = [
   },
 ]
 
+type SortColumn = "platform" | "version" | "dateLimit" | "gmud" | "packageCount" | "legalDemands" | null
+type SortDirection = "asc" | "desc"
+
 export default function Calendar() {
   const [searchTerm, setSearchTerm] = useState("")
+  const [sortColumn, setSortColumn] = useState<SortColumn>(null)
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
 
   const filteredData = mockData.filter(
     (release) =>
       release.gmud.toLowerCase().includes(searchTerm.toLowerCase()) ||
       release.version.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  const sortedData = [...filteredData].sort((a, b) => {
+    if (!sortColumn) return 0
+
+    const aValue = a[sortColumn]
+    const bValue = b[sortColumn]
+
+    if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
+    if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
+    return 0
+  })
+
+  const handleSort = (column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+    } else {
+      setSortColumn(column)
+      setSortDirection("asc")
+    }
+  }
+
+  const renderSortIcon = (column: SortColumn) => {
+    if (sortColumn !== column) return <span className="w-4" /> // placeholder for alignment
+    return sortDirection === "asc" ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
+  }
 
   return (
     <div className="p-8 lg:p-12 max-w-6xl mx-auto space-y-6">
@@ -113,17 +143,29 @@ export default function Calendar() {
           <TableCaption className="pb-4 text-xs text-primary/60">System Schedule v3.14</TableCaption>
           <TableHeader className="bg-black/40">
             <TableRow className="hover:bg-transparent border-b-primary/20">
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">Plataforma</TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">Versão</TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">Data Limite</TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">GMUD</TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold text-right">Pacotes</TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold text-right">Demandas</TableHead>
+              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("platform")}>
+                <div className="flex items-center">Plataforma {renderSortIcon("platform")}</div>
+              </TableHead>
+              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("version")}>
+                <div className="flex items-center">Versão {renderSortIcon("version")}</div>
+              </TableHead>
+              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("dateLimit")}>
+                <div className="flex items-center">Data Limite {renderSortIcon("dateLimit")}</div>
+              </TableHead>
+              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("gmud")}>
+                <div className="flex items-center">GMUD {renderSortIcon("gmud")}</div>
+              </TableHead>
+              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold text-right cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("packageCount")}>
+                <div className="flex items-center justify-end">Pacotes {renderSortIcon("packageCount")}</div>
+              </TableHead>
+              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold text-right cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("legalDemands")}>
+                <div className="flex items-center justify-end">Demandas {renderSortIcon("legalDemands")}</div>
+              </TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredData.length > 0 ? (
-            filteredData.map((release) => (
+          {sortedData.length > 0 ? (
+            sortedData.map((release) => (
               <TableRow key={release.id} className="group transition-colors border-b-border/30 hover:bg-white/5 cursor-default">
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
