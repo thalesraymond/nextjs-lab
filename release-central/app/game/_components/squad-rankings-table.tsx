@@ -77,7 +77,8 @@ export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Buscar por Squad, Train ou Comunidade..."
+              aria-label="Buscar por Squad, Train ou Comunidade..."
+              placeholder="Squad, Train ou Comunidade..."
               className="w-full bg-black/40 pl-9 border-primary/20 focus-visible:ring-primary/30"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
