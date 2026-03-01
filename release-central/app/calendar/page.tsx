@@ -100,6 +100,7 @@ export default function Calendar() {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             type="search"
+            aria-label="Search by GMUD or version..."
             placeholder="Search by GMUD or version..."
             className="w-full bg-black/40 pl-9 border-primary/20 focus-visible:ring-primary/30"
             value={searchTerm}
