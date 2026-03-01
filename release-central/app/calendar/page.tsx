@@ -102,19 +102,19 @@ export default function Calendar() {
     return 0
   }), [filteredData, sortColumn, sortDirection])
 
-  const handleSort = (column: SortColumn) => {
+  const handleSort = useCallback((column: SortColumn) => {
     if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc")
+      setSortDirection(prev => prev === "asc" ? "desc" : "asc")
     } else {
       setSortColumn(column)
       setSortDirection("asc")
     }
-  }
+  }, [sortColumn])
 
-  const renderSortIcon = (column: SortColumn) => {
+  const renderSortIcon = useCallback((column: SortColumn) => {
     if (sortColumn !== column) return <span className="w-4" /> // placeholder for alignment
     return sortDirection === "asc" ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
-  }
+  }, [sortColumn, sortDirection])
 
   return (
     <div className="p-8 lg:p-12 max-w-6xl mx-auto space-y-6">
