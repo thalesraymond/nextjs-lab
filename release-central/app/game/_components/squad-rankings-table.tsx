@@ -104,8 +104,16 @@ export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
                 filteredSquads.map((squad) => (
                   <TableRow
                     key={squad.squad}
-                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    className="cursor-pointer hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset"
+                    tabIndex={0}
                     onClick={() => setSelectedSquad(squad)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedSquad(squad);
+                      }
+                    }}
+                    aria-label={`Ver detalhes da squad ${squad.squad}`}
                   >
                     <TableCell className="text-center font-bold text-lg">{squad.position}º</TableCell>
                     <TableCell className="flex justify-center">
