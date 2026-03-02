@@ -85,11 +85,16 @@ export default function Calendar() {
   const [sortColumn, setSortColumn] = useState<SortColumn>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
 
-  const filteredData = useMemo(() => mockData.filter(
-    (release) =>
-      release.gmud.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      release.version.toLowerCase().includes(searchTerm.toLowerCase())
-  ), [searchTerm])
+  // ⚡ Bolt: Hoisted searchTerm.toLowerCase() outside the filter loop to prevent
+  // redundant string conversions on every iteration, reducing CPU overhead during search.
+  const filteredData = useMemo(() => {
+    const searchLower = searchTerm.toLowerCase();
+    return mockData.filter(
+      (release) =>
+        release.gmud.toLowerCase().includes(searchLower) ||
+        release.version.toLowerCase().includes(searchLower)
+    );
+  }, [searchTerm])
 
   const sortedData = useMemo(() => [...filteredData].sort((a, b) => {
     if (!sortColumn) return 0

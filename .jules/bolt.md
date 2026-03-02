@@ -1,3 +1,7 @@
 ## 2025-02-28 - [Performance] Date Parsing in Nested Loops
 **Learning:** Instantiating `new Date()` inside nested loops for basic string formatting (like extracting `YYYY-MM-DD` from an ISO string) is a severe performance bottleneck. Our benchmark showed string manipulation (`str.substring(0, 10)`) is ~460x faster than `new Date(str).toISOString().split("T")[0]`. Additionally, instantiating `new Date('YYYY-MM-DD')` for tick formatting can introduce subtle off-by-one timezone bugs depending on the client's local time.
 **Action:** When extracting date parts from ISO 8601 strings, use string manipulation (`substring` or `split`) instead of Date parsing. When formatting dates for UI components, parse the string parts manually if only simple formatting (like DD/MM) is needed, bypassing the Date object overhead.
+
+## 2025-03-02 - [Performance] Date Formatting vs Correctness
+**Learning:** While replacing `new Date()` with string manipulation in loops is faster, it breaks functionality when parsing full ISO strings that contain timezones (e.g. `2024-02-28T12:00:00Z`). Splitting an ISO string forces the UI to display the UTC time instead of the user's local timezone. Speed without correctness is useless.
+**Action:** Do not sacrifice semantic correctness (like local timezone formatting via `date-fns` and `ptBR` locale) for micro-optimizations. Look for non-destructive performance wins first, such as hoisting string conversions (like `toLowerCase()`) outside of `.filter()` iterations to avoid O(N) recalculations.
