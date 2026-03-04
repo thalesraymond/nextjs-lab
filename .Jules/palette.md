@@ -4,3 +4,6 @@
 ## 2025-03-02 - Interactive Table Row Accessibility
 **Learning:** Table rows (`<tr>`) used as interactive elements (e.g., clicking to open a sheet/modal) naturally lack keyboard accessibility and focus management. Users navigating via `Tab` will skip over them, rendering the core table content inaccessible to screen readers and keyboard users.
 **Action:** When a `<TableRow>` has an `onClick` handler, explicitly add `tabIndex={0}`, an `onKeyDown` handler listening to `Enter` and `Space`, `aria-label` for screen reader context, and explicit `focus-visible` outline styles (`focus-visible:ring-2`, `focus-visible:outline-none`) to provide visual feedback and guarantee inclusive navigation.
+## 2025-03-02 - Interactive Table Header Accessibility
+**Learning:** Table headers (`<th>`) that act as sort triggers lack implicit keyboard interactivity and role communication. Screen readers need `aria-sort` to announce the current sort state, and keyboard users need `tabIndex` and `onKeyDown` to interact with them via Space or Enter.
+**Action:** When creating sortable data tables, explicitly add `tabIndex={0}`, an `onKeyDown` handler (for Space and Enter), an `aria-label` describing the sort action, `aria-sort` mapping to the active sort direction, and clear `focus-visible` styling (`focus-visible:ring-2`) to the `TableHead` component.
