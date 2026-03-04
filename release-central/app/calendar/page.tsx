@@ -3,6 +3,7 @@
 import { useCallback, useMemo, useState } from "react"
 import { Search, ChevronDown, ChevronUp } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { cn } from "@/lib/utils"
 
 import {
   Table,
@@ -121,6 +122,29 @@ export default function Calendar() {
     return sortDirection === "asc" ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />
   }, [sortColumn, sortDirection])
 
+  const renderSortableHeader = (column: SortColumn, label: string, align: "left" | "right" = "left") => (
+    <TableHead
+      className={cn(
+        "text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset",
+        align === "right" && "text-right"
+      )}
+      onClick={() => handleSort(column)}
+      tabIndex={0}
+      aria-label={`Sort by ${label}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          handleSort(column)
+        }
+      }}
+      aria-sort={sortColumn === column ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}
+    >
+      <div className={cn("flex items-center", align === "right" && "justify-end")}>
+        {label} {renderSortIcon(column)}
+      </div>
+    </TableHead>
+  )
+
   return (
     <div className="p-8 lg:p-12 max-w-6xl mx-auto space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -149,24 +173,12 @@ export default function Calendar() {
           <TableCaption className="pb-4 text-xs text-primary/60">System Schedule v3.14</TableCaption>
           <TableHeader className="bg-black/40">
             <TableRow className="hover:bg-transparent border-b-primary/20">
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("platform")}>
-                <div className="flex items-center">Plataforma {renderSortIcon("platform")}</div>
-              </TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("version")}>
-                <div className="flex items-center">Versão {renderSortIcon("version")}</div>
-              </TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("dateLimit")}>
-                <div className="flex items-center">Data Limite {renderSortIcon("dateLimit")}</div>
-              </TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("gmud")}>
-                <div className="flex items-center">GMUD {renderSortIcon("gmud")}</div>
-              </TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold text-right cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("packageCount")}>
-                <div className="flex items-center justify-end">Pacotes {renderSortIcon("packageCount")}</div>
-              </TableHead>
-              <TableHead className="text-primary tracking-wider uppercase text-xs font-bold text-right cursor-pointer hover:bg-white/5 transition-colors" onClick={() => handleSort("legalDemands")}>
-                <div className="flex items-center justify-end">Demandas {renderSortIcon("legalDemands")}</div>
-              </TableHead>
+              {renderSortableHeader("platform", "Plataforma")}
+              {renderSortableHeader("version", "Versão")}
+              {renderSortableHeader("dateLimit", "Data Limite")}
+              {renderSortableHeader("gmud", "GMUD")}
+              {renderSortableHeader("packageCount", "Pacotes", "right")}
+              {renderSortableHeader("legalDemands", "Demandas", "right")}
             </TableRow>
         </TableHeader>
         <TableBody>
