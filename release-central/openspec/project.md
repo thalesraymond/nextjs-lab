@@ -16,7 +16,10 @@
 [Document your architectural decisions and patterns]
 
 ### Testing Strategy
-[Explain your testing approach and requirements]
+- **Unit & Component Tests**: Jest + React Testing Library. Run with `pnpm test`.
+- **Test location**: `__tests__/` directories colocated with source files.
+- **E2E Tests**: Playwright (planned for a future change; not yet implemented).
+- **Snapshots**: Not used. Prefer behavioral assertions.
 
 ### Git Workflow
 [Describe your branching strategy and commit conventions]

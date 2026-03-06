@@ -63,8 +63,12 @@ This document outlines the core principles and practices for developing in this 
 
 ## Testing
 
-- **Unit Tests**: Write unit tests for utility functions and complex components.
-- **E2E Tests**: Use Playwright or Cypress for critical user flows.
+- **Framework**: Jest + `ts-jest` for unit and component tests; React Testing Library for component assertions.
+- **Run tests**: `pnpm test` (single run) or `pnpm test:watch` (interactive watch mode).
+- **Test placement**: Colocate tests in `__tests__/` directories next to the source they test.
+- **Naming**: `<source-file>.test.ts` for units, `<source-file>.test.tsx` for components.
+- **Component tests**: Mock external dependencies (Shadcn UI, Lucide icons, Next.js APIs) in the test file. Prefer behavioral assertions over implementation details.
+- **E2E tests**: Playwright (planned, not yet implemented).
 
 ## Context7 MCP
 
