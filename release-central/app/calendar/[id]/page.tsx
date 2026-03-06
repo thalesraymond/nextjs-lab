@@ -1,9 +1,9 @@
 "use client"
 
-import { use, useMemo } from "react"
+import { use, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, Hash, Users, GitPullRequest, Scale, ExternalLink, ToggleRight, ToggleLeft } from "lucide-react"
+import { ArrowLeft, Hash, Users, GitPullRequest, Scale, ExternalLink, ToggleRight, ToggleLeft, Filter } from "lucide-react"
 import { getReleaseById, getGmudsByReleaseId } from "../data"
 import { cn } from "@/lib/utils"
 
@@ -26,6 +26,7 @@ export default function ReleaseDetailsPage({ params }: PageProps) {
   const releaseId = Number(id)
   const release = getReleaseById(releaseId)
   const gmuds = getGmudsByReleaseId(releaseId)
+  const [selectedSquad, setSelectedSquad] = useState<string | null>(null)
 
   const stats = useMemo(() => {
     const uniqueSquads = new Set(gmuds.map((g) => g.squad)).size
@@ -33,6 +34,15 @@ export default function ReleaseDetailsPage({ params }: PageProps) {
     const totalPrs = gmuds.length
     return { total: gmuds.length, uniqueSquads, totalPrs, legalDemands }
   }, [gmuds])
+
+  const uniqueSquads = useMemo(() => {
+    return Array.from(new Set(gmuds.map((g) => g.squad))).sort()
+  }, [gmuds])
+
+  const filteredGmuds = useMemo(() => {
+    if (!selectedSquad) return gmuds
+    return gmuds.filter((g) => g.squad === selectedSquad)
+  }, [gmuds, selectedSquad])
 
   if (!release) {
     return (
@@ -153,9 +163,39 @@ export default function ReleaseDetailsPage({ params }: PageProps) {
 
       {/* GMUD Table */}
       <div className="space-y-4">
-        <h2 className="text-lg font-bold tracking-tight text-foreground">
-          GMUDs nesta Release
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 className="text-lg font-bold tracking-tight text-foreground">
+            GMUDs nesta Release
+          </h2>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+            <button
+              onClick={() => setSelectedSquad(null)}
+              className={cn(
+                "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-200",
+                selectedSquad === null
+                  ? "bg-primary/20 border-primary/40 text-primary shadow-[0_0_8px_-2px_var(--color-primary)]"
+                  : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10 hover:text-foreground"
+              )}
+            >
+              Todas
+            </button>
+            {uniqueSquads.map((squad) => (
+              <button
+                key={squad}
+                onClick={() => setSelectedSquad(squad)}
+                className={cn(
+                  "px-3 py-1 rounded-full text-xs font-medium border transition-all duration-200",
+                  selectedSquad === squad
+                    ? "bg-primary/20 border-primary/40 text-primary shadow-[0_0_8px_-2px_var(--color-primary)]"
+                    : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10 hover:text-foreground"
+                )}
+              >
+                {squad}
+              </button>
+            ))}
+          </div>
+        </div>
 
         <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-md shadow-[0_0_20px_-5px_rgba(0,0,0,0.5)] overflow-hidden">
           <Table>
@@ -164,11 +204,12 @@ export default function ReleaseDetailsPage({ params }: PageProps) {
                 <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">GMUD</TableHead>
                 <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">PR</TableHead>
                 <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">Título</TableHead>
+                <TableHead className="text-primary tracking-wider uppercase text-xs font-bold">Squad</TableHead>
                 <TableHead className="text-primary tracking-wider uppercase text-xs font-bold text-center">Feature Toggle</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {gmuds.map((gmud) => (
+              {filteredGmuds.map((gmud) => (
                 <TableRow
                   key={gmud.gmudNumber}
                   className="group transition-colors border-b-border/30 hover:bg-white/5"
@@ -189,6 +230,12 @@ export default function ReleaseDetailsPage({ params }: PageProps) {
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground group-hover:text-gray-300 transition-colors max-w-xs truncate">
                     {gmud.title}
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                      <Users className="w-3 h-3" />
+                      {gmud.squad}
+                    </span>
                   </TableCell>
                   <TableCell className="text-center">
                     {gmud.hasFeatureToggle ? (
