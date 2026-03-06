@@ -2,7 +2,7 @@
 
 import { useCallback, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, ChevronDown, ChevronUp } from "lucide-react"
+import { Search, ChevronDown, ChevronUp, Layers, Package, Scale, Clock } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 
@@ -39,6 +39,21 @@ export default function Calendar() {
         release.version.toLowerCase().includes(searchLower)
     );
   }, [searchTerm])
+
+  const summaryStats = useMemo(() => {
+    const totalPackages = filteredData.reduce((sum, r) => sum + r.packageCount, 0)
+    const totalDemands = filteredData.reduce((sum, r) => sum + r.legalDemands, 0)
+    const sortedDates = filteredData
+      .map((r) => r.dateLimit)
+      .sort()
+    const nearestDate = sortedDates[0] ?? null
+    return {
+      count: filteredData.length,
+      totalPackages,
+      totalDemands,
+      nearestDate,
+    }
+  }, [filteredData])
 
   const sortedData = useMemo(() => [...filteredData].sort((a, b) => {
     if (!sortColumn) return 0
@@ -109,6 +124,37 @@ export default function Calendar() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
+      </div>
+
+      {/* Summary Metrics Bar */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Releases", value: summaryStats.count, icon: Layers, color: "text-blue-400", bgColor: "bg-blue-500/10", ringColor: "ring-blue-500/20" },
+          { label: "Pacotes", value: summaryStats.totalPackages, icon: Package, color: "text-violet-400", bgColor: "bg-violet-500/10", ringColor: "ring-violet-500/20" },
+          { label: "Demandas Legais", value: summaryStats.totalDemands, icon: Scale, color: "text-amber-400", bgColor: "bg-amber-500/10", ringColor: "ring-amber-500/20" },
+          { label: "Próx. Data Limite", value: summaryStats.nearestDate ?? "—", icon: Clock, color: "text-emerald-400", bgColor: "bg-emerald-500/10", ringColor: "ring-emerald-500/20" },
+        ].map((card) => (
+          <div
+            key={card.label}
+            className={cn(
+              "relative overflow-hidden rounded-xl border border-primary/10 bg-card/40 backdrop-blur-md p-4 space-y-2",
+              "hover:border-primary/25 transition-all duration-300 hover:shadow-lg hover:shadow-black/20"
+            )}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                {card.label}
+              </span>
+              <div className={cn("w-7 h-7 rounded-lg flex items-center justify-center ring-1", card.bgColor, card.ringColor)}>
+                <card.icon className={cn("w-3.5 h-3.5", card.color)} />
+              </div>
+            </div>
+            <div className={cn("text-2xl font-extrabold tracking-tight", card.color)}>
+              {card.value}
+            </div>
+            <div className={cn("absolute -bottom-4 -right-4 w-20 h-20 rounded-full blur-2xl opacity-10", card.bgColor)} />
+          </div>
+        ))}
       </div>
 
       <div className="rounded-xl border border-primary/20 bg-card/40 backdrop-blur-md shadow-[0_0_20px_-5px_rgba(0,0,0,0.5)] overflow-hidden">
