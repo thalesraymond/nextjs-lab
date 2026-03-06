@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { ObjectId } from 'mongodb';
 import clientPromise from '@/lib/mongodb';
 import type { ReleaseDocument } from '@/lib/types';
@@ -95,6 +96,8 @@ export async function PATCH(request: Request, { params }: RouteParams) {
         { status: 404 }
       );
     }
+
+    revalidatePath('/calendar');
 
     return NextResponse.json(result);
   } catch (error) {

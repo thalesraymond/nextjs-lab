@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import clientPromise from "@/lib/mongodb"
 import type { ReleaseDocument } from "@/lib/types"
 import { ReleaseTable, type ReleaseRow } from "./release-table"

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import clientPromise from '@/lib/mongodb';
 import type { ReleaseDocument, PackageItem } from '@/lib/types';
 
@@ -160,6 +161,8 @@ export async function POST(request: Request) {
     const client = await clientPromise;
     const db = client.db(DB_NAME);
     const result = await db.collection<ReleaseDocument>(COLLECTION).insertOne(release as ReleaseDocument);
+
+    revalidatePath('/calendar');
 
     return NextResponse.json(
       { ...release, _id: result.insertedId },
