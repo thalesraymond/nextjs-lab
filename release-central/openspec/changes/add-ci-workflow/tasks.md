@@ -1,0 +1,1 @@
+- [x] 1. Create `.github/workflows/ci.yml` containing the CI steps for checkout, Node.js setup, pnpm setup, install dependencies, build, lint, and test.
