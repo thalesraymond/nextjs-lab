@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
 import { Search, ChevronDown, ChevronUp } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
@@ -17,71 +18,13 @@ import {
 import { AndroidLogo } from "@/components/icons/android-logo"
 import { AppleLogo } from "@/components/icons/apple-logo"
 import { CopyButton } from "@/components/ui/copy-button"
-
-type Platform = "android" | "ios"
-
-interface Release {
-  id: number
-  platform: Platform
-  version: string
-  dateLimit: string
-  gmud: string
-  packageCount: number
-  legalDemands: number
-}
-
-const mockData: Release[] = [
-  {
-    id: 1,
-    platform: "android",
-    version: "3.5.0",
-    dateLimit: "2024-02-15",
-    gmud: "CHG0001234",
-    packageCount: 12,
-    legalDemands: 2,
-  }, 
-  {
-    id: 2,
-    platform: "ios",
-    version: "3.5.0",
-    dateLimit: "2024-02-16",
-    gmud: "CHG0001235",
-    packageCount: 10,
-    legalDemands: 3,
-  },
-  {
-    id: 3,
-    platform: "android",
-    version: "3.5.1",
-    dateLimit: "2024-03-01",
-    gmud: "CHG0002001",
-    packageCount: 5,
-    legalDemands: 0,
-  },
-  {
-    id: 4,
-    platform: "ios",
-    version: "3.5.1",
-    dateLimit: "2024-03-02",
-    gmud: "CHG0002002",
-    packageCount: 6,
-    legalDemands: 1,
-  },
-  {
-    id: 5,
-    platform: "android",
-    version: "3.6.0",
-    dateLimit: "2024-03-15",
-    gmud: "CHG0003456",
-    packageCount: 20,
-    legalDemands: 5,
-  },
-]
+import { mockReleases } from "./data"
 
 type SortColumn = "platform" | "version" | "dateLimit" | "gmud" | "packageCount" | "legalDemands" | null
 type SortDirection = "asc" | "desc"
 
 export default function Calendar() {
+  const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
   const [sortColumn, setSortColumn] = useState<SortColumn>(null)
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc")
@@ -90,7 +33,7 @@ export default function Calendar() {
   // redundant string conversions on every iteration, reducing CPU overhead during search.
   const filteredData = useMemo(() => {
     const searchLower = searchTerm.toLowerCase();
-    return mockData.filter(
+    return mockReleases.filter(
       (release) =>
         release.gmud.toLowerCase().includes(searchLower) ||
         release.version.toLowerCase().includes(searchLower)
@@ -184,7 +127,19 @@ export default function Calendar() {
         <TableBody>
           {sortedData.length > 0 ? (
             sortedData.map((release) => (
-              <TableRow key={release.id} className="group transition-colors border-b-border/30 hover:bg-white/5 cursor-default">
+              <TableRow
+                key={release.id}
+                className="group transition-colors border-b-border/30 hover:bg-white/5 cursor-pointer"
+                onClick={() => router.push(`/calendar/${release.id}`)}
+                role="link"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    router.push(`/calendar/${release.id}`)
+                  }
+                }}
+              >
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-3">
                     {release.platform === "android" ? (
@@ -200,7 +155,13 @@ export default function Calendar() {
                 <TableCell className="font-mono text-xs">
                   <div className="flex items-center gap-1.5 inline-flex bg-primary/10 px-2 py-1 rounded border border-primary/20 text-primary/80">
                     <span>{release.gmud}</span>
-                    <CopyButton text={release.gmud} className="p-0.5 hover:bg-primary/20 text-primary/80" title="Copy GMUD" />
+                    <span onClick={(e) => e.stopPropagation()}>
+                      <CopyButton
+                        text={release.gmud}
+                        className="p-0.5 hover:bg-primary/20 text-primary/80"
+                        title="Copy GMUD"
+                      />
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell className="text-right font-bold text-gray-300">{release.packageCount}</TableCell>
