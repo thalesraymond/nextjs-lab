@@ -16,7 +16,7 @@ jobs:
   build-lint-test:
     runs-on: ubuntu-latest
     env:
-     MONGODB_URI: "placeholder ;)"
+     MONGODB_URI: "mongodb+srv://localhost/release-central?retryWrites=true&w=majority"
     defaults:
       run:
         working-directory: ./release-central
