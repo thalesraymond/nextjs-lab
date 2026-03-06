@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Hash, Users, GitPullRequest, Scale, ExternalLink, ToggleRight, ToggleLeft, Filter } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { GmudDetail, Release } from "../data"
+import type { Release } from "../data"
 
 import {
   Table,
@@ -17,28 +17,27 @@ import {
 
 interface ReleaseDetailContentProps {
   release: Release
-  gmuds: GmudDetail[]
 }
 
-export function ReleaseDetailContent({ release, gmuds }: ReleaseDetailContentProps) {
+export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
   const router = useRouter()
   const [selectedSquad, setSelectedSquad] = useState<string | null>(null)
+  const packages = release.packages
 
   const stats = useMemo(() => {
-    const uniqueSquads = new Set(gmuds.map((g) => g.squad)).size
-    const legalDemands = gmuds.filter((g) => g.isLegalDemand).length
-    const totalPrs = gmuds.length
-    return { total: gmuds.length, uniqueSquads, totalPrs, legalDemands }
-  }, [gmuds])
+    const uniqueSquads = new Set(packages.map((p) => p.squad)).size
+    const legalDemands = packages.filter((p) => p.isLegalDemand).length
+    return { total: packages.length, uniqueSquads, totalPrs: packages.length, legalDemands }
+  }, [packages])
 
   const uniqueSquads = useMemo(() => {
-    return Array.from(new Set(gmuds.map((g) => g.squad))).sort()
-  }, [gmuds])
+    return Array.from(new Set(packages.map((p) => p.squad))).sort()
+  }, [packages])
 
-  const filteredGmuds = useMemo(() => {
-    if (!selectedSquad) return gmuds
-    return gmuds.filter((g) => g.squad === selectedSquad)
-  }, [gmuds, selectedSquad])
+  const filteredPackages = useMemo(() => {
+    if (!selectedSquad) return packages
+    return packages.filter((p) => p.squad === selectedSquad)
+  }, [packages, selectedSquad])
 
   const kpiCards = [
     {
@@ -133,11 +132,11 @@ export function ReleaseDetailContent({ release, gmuds }: ReleaseDetailContentPro
         ))}
       </div>
 
-      {/* GMUD Table */}
+      {/* Package Table */}
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <h2 className="text-lg font-bold tracking-tight text-foreground">
-            GMUDs nesta Release
+            Pacotes nesta Release
           </h2>
           {uniqueSquads.length > 0 && (
             <div className="flex items-center gap-2 flex-wrap">
@@ -183,37 +182,37 @@ export function ReleaseDetailContent({ release, gmuds }: ReleaseDetailContentPro
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredGmuds.length > 0 ? (
-                filteredGmuds.map((gmud) => (
+              {filteredPackages.length > 0 ? (
+                filteredPackages.map((pkg) => (
                   <TableRow
-                    key={gmud.gmudNumber}
+                    key={pkg.gmudNumber}
                     className="group transition-colors border-b-border/30 hover:bg-white/5"
                   >
                     <TableCell className="font-mono text-sm text-foreground">
-                      {gmud.gmudNumber}
+                      {pkg.gmudNumber}
                     </TableCell>
                     <TableCell>
                       <a
-                        href={gmud.prUrl}
+                        href={pkg.prUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-sm text-primary hover:text-blue-300 transition-colors font-mono"
                       >
-                        {gmud.prNumber}
+                        {pkg.prNumber}
                         <ExternalLink className="w-3 h-3 opacity-60" />
                       </a>
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground group-hover:text-gray-300 transition-colors max-w-xs truncate">
-                      {gmud.title}
+                      {pkg.title}
                     </TableCell>
                     <TableCell>
                       <span className="inline-flex items-center gap-1.5 text-xs font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
                         <Users className="w-3 h-3" />
-                        {gmud.squad}
+                        {pkg.squad}
                       </span>
                     </TableCell>
                     <TableCell className="text-center">
-                      {gmud.hasFeatureToggle ? (
+                      {pkg.hasFeatureToggle ? (
                         <span className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-400">
                           <ToggleRight className="w-4 h-4" />
                           Sim
@@ -230,7 +229,7 @@ export function ReleaseDetailContent({ release, gmuds }: ReleaseDetailContentPro
               ) : (
                 <TableRow>
                   <TableCell colSpan={5} className="h-24 text-center text-muted-foreground">
-                    Nenhuma GMUD registrada para esta release.
+                    Nenhum pacote registrado para esta release.
                   </TableCell>
                 </TableRow>
               )}

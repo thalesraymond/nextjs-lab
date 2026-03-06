@@ -24,8 +24,7 @@ interface ReleaseItem {
   version: string
   dateLimit: string
   gmud: string
-  packageCount: number
-  legalDemands: number
+  packages: { isLegalDemand: boolean }[]
 }
 
 interface FormData {
@@ -532,7 +531,7 @@ export default function BackofficePage() {
 
                       {/* Package Count (read-only) */}
                       <TableCell className="text-right font-bold text-gray-300 text-sm">
-                        {release.packageCount}
+                        {(release.packages ?? []).length}
                       </TableCell>
 
                       {/* Actions */}

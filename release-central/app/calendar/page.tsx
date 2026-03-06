@@ -20,8 +20,7 @@ async function getReleases(): Promise<ReleaseRow[]> {
     version: r.version,
     dateLimit: r.dateLimit,
     gmud: r.gmud,
-    packageCount: r.packageCount,
-    legalDemands: r.legalDemands,
+    packages: r.packages ?? [],
   }))
 }
 

@@ -1,9 +1,102 @@
 import { NextResponse } from 'next/server';
 import clientPromise from '@/lib/mongodb';
-import type { ReleaseDocument } from '@/lib/types';
+import type { ReleaseDocument, PackageItem } from '@/lib/types';
 
 const DB_NAME = 'release-central';
 const COLLECTION = 'release';
+
+// --- Random package generation data ---
+const SQUADS = [
+  'Squad Alpha', 'Squad Bravo', 'Squad Charlie',
+  'Squad Delta', 'Squad Echo', 'Squad Foxtrot',
+];
+
+const TITLES = [
+  'Migração de analytics para Firebase',
+  'Correção de crash no login biométrico',
+  'Adequação LGPD - Consentimento de cookies',
+  'Novo fluxo de onboarding',
+  'Atualização de política de privacidade',
+  'Dark mode para tela principal',
+  'Ajuste de acessibilidade VoiceOver',
+  'Adequação PCI-DSS tokenização',
+  'Refactor módulo de pagamentos',
+  'Termos de uso v2',
+  'Implementação Open Banking fase 2',
+  'Hotfix push notification Android 14',
+  'Melhoria performance lista de transações',
+  'Suporte a Widget iOS 17',
+  'Adequação regulatória Banco Central',
+  'Cache de imagens otimizado',
+  'Redesign tela Home',
+  'Novo módulo de investimentos',
+  'Adequação LGPD - Portabilidade de dados',
+  'Integração Pix Automático',
+  'Migração para Kotlin Multiplatform',
+  'Adequação Open Finance fase 3',
+  'Novo sistema de notificações',
+  'Resolução 4.893 - Segurança cibernética',
+  'Otimização de bundle size',
+  'Lei do Sigilo Bancário - Auditoria',
+  'Implementação de biometria facial',
+  'Refactor de autenticação OAuth2',
+  'Melhoria no fluxo de recuperação de senha',
+  'Integração com gateway de pagamentos v3',
+];
+
+const LEGAL_TITLES = [
+  'Adequação LGPD - Consentimento de cookies',
+  'Adequação PCI-DSS tokenização',
+  'Termos de uso v2',
+  'Adequação regulatória Banco Central',
+  'Adequação LGPD - Portabilidade de dados',
+  'Adequação Open Finance fase 3',
+  'Resolução 4.893 - Segurança cibernética',
+  'Lei do Sigilo Bancário - Auditoria',
+];
+
+function randomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomElement<T>(arr: T[]): T {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function generatePackages(count: number): PackageItem[] {
+  const packages: PackageItem[] = [];
+  const usedGmudNumbers = new Set<string>();
+  const usedPrNumbers = new Set<string>();
+
+  for (let i = 0; i < count; i++) {
+    let gmudNum: string;
+    do {
+      gmudNum = `GMUD-${randomInt(1000, 9999)}`;
+    } while (usedGmudNumbers.has(gmudNum));
+    usedGmudNumbers.add(gmudNum);
+
+    let prNum: number;
+    do {
+      prNum = randomInt(100, 999);
+    } while (usedPrNumbers.has(String(prNum)));
+    usedPrNumbers.add(String(prNum));
+
+    const isLegal = Math.random() < 0.2; // ~20% chance of being legal demand
+    const title = isLegal ? randomElement(LEGAL_TITLES) : randomElement(TITLES);
+
+    packages.push({
+      gmudNumber: gmudNum,
+      prNumber: `PR-${prNum}`,
+      prUrl: `https://github.com/org/repo/pull/${prNum}`,
+      title,
+      squad: randomElement(SQUADS),
+      hasFeatureToggle: Math.random() < 0.4, // ~40% chance
+      isLegalDemand: isLegal,
+    });
+  }
+
+  return packages;
+}
 
 export async function GET() {
   try {
@@ -52,13 +145,15 @@ export async function POST(request: Request) {
       );
     }
 
+    const packageCount = randomInt(5, 30);
+    const packages = generatePackages(packageCount);
+
     const release: Omit<ReleaseDocument, '_id'> = {
       platform,
       version: version.trim(),
       dateLimit,
       gmud: gmud?.trim() || '',
-      packageCount: 0,
-      legalDemands: 0,
+      packages,
       createdAt: new Date(),
     };
 

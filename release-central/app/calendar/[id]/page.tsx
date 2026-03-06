@@ -3,8 +3,8 @@ import Link from "next/link"
 import { ArrowLeft, Hash } from "lucide-react"
 import clientPromise from "@/lib/mongodb"
 import type { ReleaseDocument } from "@/lib/types"
-import { getGmudsByReleaseId } from "../data"
 import { ReleaseDetailContent } from "./release-detail-content"
+import type { Release } from "../data"
 
 const DB_NAME = "release-central"
 const COLLECTION = "release"
@@ -13,7 +13,7 @@ interface PageProps {
   params: Promise<{ id: string }>
 }
 
-async function getReleaseById(id: string) {
+async function getReleaseById(id: string): Promise<Release | null> {
   if (!ObjectId.isValid(id)) return null
 
   const client = await clientPromise
@@ -30,15 +30,13 @@ async function getReleaseById(id: string) {
     version: release.version,
     dateLimit: release.dateLimit,
     gmud: release.gmud,
-    packageCount: release.packageCount,
-    legalDemands: release.legalDemands,
+    packages: release.packages ?? [],
   }
 }
 
 export default async function ReleaseDetailsPage({ params }: PageProps) {
   const { id } = await params
   const release = await getReleaseById(id)
-  const gmuds = getGmudsByReleaseId(id)
 
   if (!release) {
     return (
@@ -65,5 +63,5 @@ export default async function ReleaseDetailsPage({ params }: PageProps) {
     )
   }
 
-  return <ReleaseDetailContent release={release} gmuds={gmuds} />
+  return <ReleaseDetailContent release={release} />
 }

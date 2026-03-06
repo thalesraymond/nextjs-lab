@@ -18,6 +18,7 @@ import {
 import { AndroidLogo } from "@/components/icons/android-logo"
 import { AppleLogo } from "@/components/icons/apple-logo"
 import { CopyButton } from "@/components/ui/copy-button"
+import type { PackageItem } from "./data"
 
 export interface ReleaseRow {
   _id: string
@@ -25,8 +26,7 @@ export interface ReleaseRow {
   version: string
   dateLimit: string
   gmud: string
-  packageCount: number
-  legalDemands: number
+  packages: PackageItem[]
 }
 
 type SortColumn = "platform" | "version" | "dateLimit" | "gmud" | "packageCount" | "legalDemands" | null
@@ -52,8 +52,8 @@ export function ReleaseTable({ releases }: ReleaseTableProps) {
   }, [searchTerm, releases])
 
   const summaryStats = useMemo(() => {
-    const totalPackages = filteredData.reduce((sum, r) => sum + r.packageCount, 0)
-    const totalDemands = filteredData.reduce((sum, r) => sum + r.legalDemands, 0)
+    const totalPackages = filteredData.reduce((sum, r) => sum + r.packages.length, 0)
+    const totalDemands = filteredData.reduce((sum, r) => sum + r.packages.filter(p => p.isLegalDemand).length, 0)
     const sortedDates = filteredData
       .map((r) => r.dateLimit)
       .sort()
@@ -66,7 +66,14 @@ export function ReleaseTable({ releases }: ReleaseTableProps) {
     }
   }, [filteredData])
 
-  const sortedData = useMemo(() => [...filteredData].sort((a, b) => {
+  // Compute derived sort values
+  const sortableData = useMemo(() => filteredData.map(r => ({
+    ...r,
+    packageCount: r.packages.length,
+    legalDemands: r.packages.filter(p => p.isLegalDemand).length,
+  })), [filteredData])
+
+  const sortedData = useMemo(() => [...sortableData].sort((a, b) => {
     if (!sortColumn) return 0
 
     const aValue = a[sortColumn]
@@ -75,7 +82,7 @@ export function ReleaseTable({ releases }: ReleaseTableProps) {
     if (aValue < bValue) return sortDirection === "asc" ? -1 : 1
     if (aValue > bValue) return sortDirection === "asc" ? 1 : -1
     return 0
-  }), [filteredData, sortColumn, sortDirection])
+  }), [sortableData, sortColumn, sortDirection])
 
   const handleSort = useCallback((column: SortColumn) => {
     if (sortColumn === column) {
