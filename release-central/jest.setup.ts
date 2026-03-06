@@ -19,6 +19,7 @@ jest.mock("next/image", () => ({
 
 // Mock next/link
 jest.mock("next/link", () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const React = require("react");
   return {
     __esModule: true,
