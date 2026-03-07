@@ -93,6 +93,12 @@ function generatePackages(count: number): PackageItem[] {
       squad: randomElement(SQUADS),
       hasFeatureToggle: Math.random() < 0.4, // ~40% chance
       isLegalDemand: isLegal,
+      flags: {
+        causedProductionIncident: false,
+        causedRegressionCrash: false,
+        codeReviewDiscussions: false,
+        prWasReverted: false,
+      },
     });
   }
 

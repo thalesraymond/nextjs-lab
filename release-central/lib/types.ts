@@ -1,5 +1,12 @@
 import { ObjectId } from 'mongodb';
 
+export interface ReleaseItemFlags {
+  causedProductionIncident: boolean;
+  causedRegressionCrash: boolean;
+  codeReviewDiscussions: boolean;
+  prWasReverted: boolean;
+}
+
 export interface PackageItem {
   gmudNumber: string;
   prNumber: string;
@@ -8,6 +15,7 @@ export interface PackageItem {
   squad: string;
   hasFeatureToggle: boolean;
   isLegalDemand: boolean;
+  flags: ReleaseItemFlags;
 }
 
 export interface ReleaseDocument {
