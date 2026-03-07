@@ -4,7 +4,7 @@
 TBD - created by archiving change add-release-backoffice. Update Purpose after archive.
 ## Requirements
 ### Requirement: Release Creation Form
-The system SHALL provide a backoffice page at `/backoffice` with a form to register new releases.
+The system SHALL provide a backoffice page at `/backoffice/calendar` with a form to register new releases.
 
 #### Scenario: User fills and submits the release form
 - **WHEN** the user fills in platform (android/ios), version number, deadline (data limite), and optionally a GMUD number
@@ -39,9 +39,9 @@ The system SHALL expose API endpoints for release CRUD operations.
 - **THEN** the system returns the matching release document
 
 ### Requirement: Backoffice Navigation
-The system SHALL include a "backoffice" entry in the sidebar navigation.
+The system SHALL include a "backoffice calendar" entry in the sidebar navigation.
 
-#### Scenario: Sidebar shows backoffice link
+#### Scenario: Sidebar shows backoffice calendar link
 - **WHEN** the sidebar is rendered
-- **THEN** a "backoffice" navigation item is visible linking to `/backoffice`
+- **THEN** a "backoffice calendar" navigation item is visible linking to `/backoffice/calendar`
 
