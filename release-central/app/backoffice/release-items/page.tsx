@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, Suspense } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import {
   Search,
@@ -124,7 +124,7 @@ const FLAG_CONFIG = [
   },
 ]
 
-export default function ReleaseItemsPage() {
+function ReleaseItemsContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -647,6 +647,21 @@ export default function ReleaseItemsPage() {
         </SheetContent>
       </Sheet>
     </div>
+  )
+}
+
+export default function ReleaseItemsPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-[50vh] items-center justify-center">
+        <div className="flex flex-col items-center gap-2 text-muted-foreground">
+          <Loader2 className="w-8 h-8 animate-spin" />
+          <p>Carregando...</p>
+        </div>
+      </div>
+    }>
+      <ReleaseItemsContent />
+    </Suspense>
   )
 }
 
