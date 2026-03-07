@@ -25,12 +25,13 @@ describe("AppSidebar", () => {
     expect(screen.getByText("Release Central")).toBeInTheDocument();
   });
 
-  it("renders all 4 navigation items", () => {
+  it("renders all 5 navigation items", () => {
     render(<AppSidebar />);
     expect(screen.getByText("home")).toBeInTheDocument();
     expect(screen.getByText("calendário")).toBeInTheDocument();
     expect(screen.getByText("game")).toBeInTheDocument();
     expect(screen.getByText("vitals")).toBeInTheDocument();
+    expect(screen.getByText("backoffice")).toBeInTheDocument();
   });
 
   it("renders correct links for each navigation item", () => {
@@ -41,6 +42,7 @@ describe("AppSidebar", () => {
     expect(hrefs).toContain("/calendar");
     expect(hrefs).toContain("/game");
     expect(hrefs).toContain("/vitals");
+    expect(hrefs).toContain("/backoffice");
   });
 
   it("renders the version footer", () => {

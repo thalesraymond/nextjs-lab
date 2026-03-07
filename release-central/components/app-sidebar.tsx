@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { Calendar, Home, Gamepad, Activity, Settings, List } from "lucide-react";
+import { Calendar, Home, Gamepad, Activity, Settings } from "lucide-react";
 import Link from "next/link";
 
 const items = [
@@ -32,14 +32,9 @@ const items = [
     icon: Activity,
   },
   {
-    title: "backoffice calendar",
-    url: "/backoffice/calendar",
+    title: "backoffice",
+    url: "/backoffice",
     icon: Settings,
-  },
-  {
-    title: "backoffice release items",
-    url: "/backoffice/release-items",
-    icon: List,
   },
 ];
 
