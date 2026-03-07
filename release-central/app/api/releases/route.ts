@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
-import clientPromise from '@/lib/mongodb';
+import clientPromise, { databaseName } from '@/lib/mongodb';
 import type { ReleaseDocument, PackageItem } from '@/lib/types';
 
-const DB_NAME = 'release-central';
+const DB_NAME = databaseName;
 const COLLECTION = 'release';
 
 // --- Random package generation data ---

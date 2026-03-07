@@ -1,12 +1,12 @@
 import { ObjectId } from "mongodb"
 import Link from "next/link"
 import { ArrowLeft, Hash } from "lucide-react"
-import clientPromise from "@/lib/mongodb"
+import clientPromise, { databaseName } from "@/lib/mongodb"
 import type { ReleaseDocument } from "@/lib/types"
 import { ReleaseDetailContent } from "./release-detail-content"
 import type { Release } from "../data"
 
-const DB_NAME = "release-central"
+const DB_NAME = databaseName
 const COLLECTION = "release"
 
 interface PageProps {

@@ -9,6 +9,8 @@ const options = {};
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
+const databaseName = "release-central";
+export { databaseName };
 
 if (process.env.NODE_ENV === 'development') {
   // In development mode, use a global variable so that the value

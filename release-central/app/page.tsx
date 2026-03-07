@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { Gamepad, Calendar, Activity } from "lucide-react";
+import { RegisterForm } from "@/components/auth/register-form";
+import { getSession } from "@/lib/session";
 
-export default function Home() {
+export default async function Home() {
+  const session = await getSession();
+
   return (
     <div className="flex min-h-screen items-center justify-center p-8 lg:p-24 relative overflow-hidden">
       {/* Ambient background glow */}
@@ -67,6 +71,30 @@ export default function Home() {
             </div>
           </Link>
         </div>
+
+        {/* Registration Section */}
+        {!session ? (
+          <div className="w-full mt-12 relative z-10 flex flex-col items-center">
+            <h2 className="text-xl font-semibold mb-6 text-white/80">Join the Release Central</h2>
+            <RegisterForm />
+          </div>
+        ) : (
+          <div className="w-full mt-12 relative z-10 flex flex-col items-center space-y-4">
+            <p className="text-lg text-emerald-400 font-medium">Welcome back, {session.name}!</p>
+            {session.admin ? (
+              <Link 
+                href="/backoffice/calendar"
+                className="px-6 py-3 rounded-md bg-white/10 hover:bg-white/20 text-white font-medium border border-white/10 transition-all"
+              >
+                Go to Backoffice →
+              </Link>
+            ) : (
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto text-center mt-4 border border-border/50 bg-card/30 p-4 rounded-lg">
+                Your account has been created successfully. A system administrator must elevate your privileges to access the backoffice.
+              </p>
+            )}
+          </div>
+        )}
 
       </main>
     </div>

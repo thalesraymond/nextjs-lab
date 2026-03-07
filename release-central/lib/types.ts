@@ -19,3 +19,12 @@ export interface ReleaseDocument {
   packages: PackageItem[];
   createdAt: Date;
 }
+
+export interface UserDocument {
+  _id?: ObjectId;
+  name: string;
+  email: string;
+  passwordHash: string;
+  admin: boolean;
+  createdAt: Date;
+}
