@@ -51,27 +51,29 @@ export function ReleaseTable({ releases }: ReleaseTableProps) {
     );
   }, [searchTerm, releases])
 
-  const summaryStats = useMemo(() => {
-    const totalPackages = filteredData.reduce((sum, r) => sum + r.packages.length, 0)
-    const totalDemands = filteredData.reduce((sum, r) => sum + r.packages.filter(p => p.isLegalDemand).length, 0)
-    const sortedDates = filteredData
-      .map((r) => r.dateLimit)
-      .sort()
-    const nearestDate = sortedDates[0] ?? null
-    return {
-      count: filteredData.length,
-      totalPackages,
-      totalDemands,
-      nearestDate,
-    }
-  }, [filteredData])
-
   // Compute derived sort values
   const sortableData = useMemo(() => filteredData.map(r => ({
     ...r,
     packageCount: r.packages.length,
     legalDemands: r.packages.filter(p => p.isLegalDemand).length,
   })), [filteredData])
+
+  const summaryStats = useMemo(() => {
+    // ⚡ Bolt: Use pre-computed packageCount and legalDemands from sortableData
+    // to avoid O(R*P) redundant array filtering on each render.
+    const totalPackages = sortableData.reduce((sum, r) => sum + r.packageCount, 0)
+    const totalDemands = sortableData.reduce((sum, r) => sum + r.legalDemands, 0)
+    const sortedDates = sortableData
+      .map((r) => r.dateLimit)
+      .sort()
+    const nearestDate = sortedDates[0] ?? null
+    return {
+      count: sortableData.length,
+      totalPackages,
+      totalDemands,
+      nearestDate,
+    }
+  }, [sortableData])
 
   const sortedData = useMemo(() => [...sortableData].sort((a, b) => {
     if (!sortColumn) return 0
