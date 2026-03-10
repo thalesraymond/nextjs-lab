@@ -2,6 +2,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "
 import { SquadScore } from "../types";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { CopyButton } from "@/components/ui/copy-button";
 
 interface SquadDetailsSheetProps {
   squad: SquadScore | null;
@@ -42,9 +43,15 @@ export function SquadDetailsSheet({ squad, isOpen, onOpenChange }: SquadDetailsS
             <h3 className="text-lg font-semibold mb-3">Entregas Recentes ({squad.delivery_items.length})</h3>
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
               {squad.delivery_items.map((item, idx) => (
-                <div key={idx} className="p-3 border rounded-md bg-muted/30 flex justify-between items-center text-sm">
-                  <div className="font-medium">{item.gmud}</div>
-                  <div className="text-muted-foreground">Issue #{item.issue_number}</div>
+                <div key={idx} className="group p-3 border rounded-md bg-muted/30 flex justify-between items-center text-sm transition-colors hover:bg-muted/50">
+                  <div className="font-medium flex items-center gap-2">
+                    {item.gmud}
+                    <CopyButton text={item.gmud} title="Copiar GMUD" className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100" />
+                  </div>
+                  <div className="text-muted-foreground flex items-center gap-2">
+                    Issue #{item.issue_number}
+                    <CopyButton text={item.issue_number.toString()} title="Copiar Issue" className="opacity-0 group-hover:opacity-100 focus-visible:opacity-100" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -54,15 +61,25 @@ export function SquadDetailsSheet({ squad, isOpen, onOpenChange }: SquadDetailsS
             <h3 className="text-lg font-semibold mb-3">Histórico de Eventos ({squad.events.length})</h3>
             <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
               {squad.events.map((event, idx) => (
-                <div key={idx} className="p-3 border rounded-md bg-muted/30 flex flex-col text-sm">
+                <div key={idx} className="group p-3 border rounded-md bg-muted/30 flex flex-col text-sm transition-colors hover:bg-muted/50">
                   <div className="flex justify-between items-center mb-1">
                     <span className="font-medium text-destructive capitalize">{event.type.replace("_", " ")}</span>
                     <span className="text-xs text-muted-foreground">
                       {format(new Date(event.date), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                     </span>
                   </div>
-                  {event.incident_number && <div className="text-muted-foreground text-xs">Incidente: {event.incident_number}</div>}
-                  {event.issue_number && <div className="text-muted-foreground text-xs">Issue: #{event.issue_number}</div>}
+                  {event.incident_number && (
+                    <div className="text-muted-foreground text-xs flex items-center gap-2 mt-1">
+                      Incidente: {event.incident_number}
+                      <CopyButton text={event.incident_number} title="Copiar Incidente" className="h-5 w-5 p-0.5 opacity-0 group-hover:opacity-100 focus-visible:opacity-100" />
+                    </div>
+                  )}
+                  {event.issue_number && (
+                    <div className="text-muted-foreground text-xs flex items-center gap-2 mt-1">
+                      Issue: #{event.issue_number}
+                      <CopyButton text={event.issue_number.toString()} title="Copiar Issue" className="h-5 w-5 p-0.5 opacity-0 group-hover:opacity-100 focus-visible:opacity-100" />
+                    </div>
+                  )}
                 </div>
               ))}
               {squad.events.length === 0 && (
