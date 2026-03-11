@@ -235,6 +235,7 @@ export default function BackofficePage() {
             : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10",
           hasError && "border-red-500/50"
         )}
+        aria-label={`Selecionar plataforma ${platform}`}
       >
         {platform === "android" ? (
           <AndroidLogo className={cn("h-6 w-6", selected ? "text-green-400 drop-shadow-[0_0_8px_rgba(34,197,94,0.6)]" : "text-green-500/60")} />
@@ -362,6 +363,7 @@ export default function BackofficePage() {
                 "active:scale-[0.99]",
                 "disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-none"
               )}
+              aria-label="Criar Release"
             >
               {isSubmitting ? (
                 <>
@@ -456,6 +458,7 @@ export default function BackofficePage() {
                                     ? "border-primary/50 bg-primary/10 text-foreground"
                                     : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10"
                                 )}
+                                aria-label={`Mudar plataforma para ${p}`}
                               >
                                 {p === "android" ? (
                                   <AndroidLogo className="h-3.5 w-3.5 text-green-500" />
@@ -543,6 +546,7 @@ export default function BackofficePage() {
                               disabled={isSaving}
                               className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 transition-colors cursor-pointer disabled:opacity-50"
                               title="Salvar"
+                              aria-label="Salvar"
                             >
                               {isSaving ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                             </button>
@@ -551,6 +555,7 @@ export default function BackofficePage() {
                               disabled={isSaving}
                               className="p-1.5 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors cursor-pointer disabled:opacity-50"
                               title="Cancelar"
+                              aria-label="Cancelar"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -560,6 +565,7 @@ export default function BackofficePage() {
                             onClick={() => startEditing(release)}
                             className="p-1.5 rounded-lg text-muted-foreground hover:bg-white/10 hover:text-primary transition-colors cursor-pointer opacity-0 group-hover:opacity-100"
                             title="Editar"
+                            aria-label="Editar"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>

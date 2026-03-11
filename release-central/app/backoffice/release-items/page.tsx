@@ -474,6 +474,7 @@ function ReleaseItemsContent() {
                   ? "border-white/5 bg-white/5 text-muted-foreground/40 cursor-not-allowed"
                   : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground"
               )}
+              aria-label="Página anterior"
             >
               <ChevronLeft className="w-4 h-4" />
               Anterior
@@ -495,6 +496,7 @@ function ReleaseItemsContent() {
                   ? "border-white/5 bg-white/5 text-muted-foreground/40 cursor-not-allowed"
                   : "border-white/10 bg-white/5 text-muted-foreground hover:bg-white/10 hover:text-foreground"
               )}
+              aria-label="Próxima página"
             >
               Próxima
               <ChevronRight className="w-4 h-4" />

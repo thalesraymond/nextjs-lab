@@ -81,6 +81,7 @@ export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
         <button
           onClick={() => router.push("/calendar")}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors group cursor-pointer"
+          aria-label="Voltar ao calendário"
         >
           <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
           Voltar ao calendário
@@ -149,6 +150,7 @@ export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
                     ? "bg-primary/20 border-primary/40 text-primary shadow-[0_0_8px_-2px_var(--color-primary)]"
                     : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10 hover:text-foreground"
                 )}
+                aria-label="Mostrar todas as squads"
               >
                 Todas
               </button>
@@ -162,6 +164,7 @@ export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
                       ? "bg-primary/20 border-primary/40 text-primary shadow-[0_0_8px_-2px_var(--color-primary)]"
                       : "bg-white/5 border-white/10 text-muted-foreground hover:bg-white/10 hover:text-foreground"
                   )}
+                  aria-label={`Filtrar por ${squad}`}
                 >
                   {squad}
                 </button>
