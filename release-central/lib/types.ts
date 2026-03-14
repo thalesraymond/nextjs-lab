@@ -36,3 +36,12 @@ export interface UserDocument {
   admin: boolean;
   createdAt: Date;
 }
+
+export interface AchievementDocument {
+  _id?: ObjectId | string;
+  name: string;
+  icon: string;
+  description: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

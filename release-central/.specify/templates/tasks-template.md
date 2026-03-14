@@ -246,6 +246,7 @@ With multiple developers:
 - [Story] label maps task to specific user story for traceability
 - Each user story should be independently completable and testable
 - Verify tests fail before implementing
+- Run build (`pnpm build`), lint (`pnpm lint`), and tests (`pnpm test` or equivalent) after every task or logical group to ensure no regressions
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
 - Avoid: vague tasks, same file conflicts, cross-story dependencies that break independence
