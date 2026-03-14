@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Calendar, List, ArrowRight } from "lucide-react"
+import { Calendar, List, ArrowRight, Trophy } from "lucide-react"
 
 const sections = [
   {
@@ -20,6 +20,15 @@ const sections = [
     iconColor: "text-purple-400",
     borderColor: "border-purple-500/20 hover:border-purple-500/40",
   },
+  {
+    title: "Achievements",
+    description: "Crie e gerencie conquistas para o sistema.",
+    href: "/backoffice/achievements",
+    icon: Trophy,
+    gradient: "from-yellow-500/20 to-orange-500/20",
+    iconColor: "text-yellow-400",
+    borderColor: "border-yellow-500/20 hover:border-yellow-500/40",
+  }
 ]
 
 export default function BackofficeHomePage() {

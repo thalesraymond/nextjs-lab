@@ -19,7 +19,7 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create backoffice achievements directory structure: `app/backoffice/achievements/_components/__tests__`
+- [X] T001 Create backoffice achievements directory structure: `app/backoffice/achievements/_components/__tests__`
 
 ---
 
@@ -27,8 +27,8 @@
 
 **Purpose**: Core infrastructure and data types that MUST be complete before ANY user story implementation
 
-- [ ] T002 Update `lib/types.ts` with `Achievement` interface per `data-model.md`
-- [ ] T003 Implement MongoDB database helper functions for Achievements in `lib/achievements.ts`
+- [X] T002 Update `lib/types.ts` with `Achievement` interface per `data-model.md`
+- [X] T003 Implement MongoDB database helper functions for Achievements in `lib/achievements.ts`
 
 **Checkpoint**: Foundation ready - database access and types are defined.
 
@@ -42,14 +42,14 @@
 
 ### Tests for User Story 2
 
-- [ ] T004 [US2] Create component test for `AchievementList` in `app/backoffice/achievements/_components/__tests__/achievement-list.test.tsx`
-- [ ] T005 [US2] Create page test for achievements list in `app/backoffice/achievements/__tests__/page.test.tsx`
+- [X] T004 [US2] Create component test for `AchievementList` in `app/backoffice/achievements/_components/__tests__/achievement-list.test.tsx`
+- [X] T005 [US2] Create page test for achievements list in `app/backoffice/achievements/__tests__/page.test.tsx`
 
 ### Implementation for User Story 2
 
-- [ ] T006 [P] [US2] Create `AchievementListItem` component in `app/backoffice/achievements/_components/achievement-list-item.tsx`
-- [ ] T007 [US2] Implement achievements list page (Server Component) in `app/backoffice/achievements/page.tsx`
-- [ ] T008 [US2] Add search functionality using URL search params in `app/backoffice/achievements/page.tsx`
+- [X] T006 [P] [US2] Create `AchievementListItem` component in `app/backoffice/achievements/_components/achievement-list-item.tsx`
+- [X] T007 [US2] Implement achievements list page (Server Component) in `app/backoffice/achievements/page.tsx`
+- [X] T008 [US2] Add search functionality using URL search params in `app/backoffice/achievements/page.tsx`
 
 **Checkpoint**: Users can now view and search the achievements library.
 
@@ -63,14 +63,14 @@
 
 ### Tests for User Story 1
 
-- [ ] T009 [US1] Create unit test for `createAchievement` Server Action in `lib/__tests__/achievements.actions.test.ts`
-- [ ] T010 [US1] Create component test for `AchievementForm` in `app/backoffice/achievements/_components/__tests__/achievement-form.test.tsx`
+- [X] T009 [US1] Create unit test for `createAchievement` Server Action in `lib/__tests__/achievements.actions.test.ts`
+- [X] T010 [US1] Create component test for `AchievementForm` in `app/backoffice/achievements/_components/__tests__/achievement-form.test.tsx`
 
 ### Implementation for User Story 1
 
-- [ ] T011 [US1] Implement `createAchievement` Server Action in `lib/achievements.actions.ts`
-- [ ] T012 [US1] Create `AchievementForm` component (Client Component) in `app/backoffice/achievements/_components/achievement-form.tsx`
-- [ ] T013 [US1] Add "Create Achievement" dialog/button to `app/backoffice/achievements/page.tsx`
+- [X] T011 [US1] Implement `createAchievement` Server Action in `lib/achievements.actions.ts`
+- [X] T012 [US1] Create `AchievementForm` component (Client Component) in `app/backoffice/achievements/_components/achievement-form.tsx`
+- [X] T013 [US1] Add "Create Achievement" dialog/button to `app/backoffice/achievements/page.tsx`
 
 **Checkpoint**: Full "Create and List" flow is functional.
 
@@ -84,13 +84,13 @@
 
 ### Tests for User Story 3
 
-- [ ] T014 [US3] Create unit test for `updateAchievement` Server Action in `lib/__tests__/achievements.actions.test.ts`
+- [X] T014 [US3] Create unit test for `updateAchievement` Server Action in `lib/__tests__/achievements.actions.test.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T015 [US3] Implement `updateAchievement` Server Action in `lib/achievements.actions.ts`
-- [ ] T016 [US3] Create achievement detail/edit page (Server Component) in `app/backoffice/achievements/[id]/page.tsx`
-- [ ] T017 [US3] Integrate `AchievementForm` into the edit page for modification support
+- [X] T015 [US3] Implement `updateAchievement` Server Action in `lib/achievements.actions.ts`
+- [X] T016 [US3] Create achievement detail/edit page (Server Component) in `app/backoffice/achievements/[id]/page.tsx`
+- [X] T017 [US3] Integrate `AchievementForm` into the edit page for modification support
 
 ---
 
@@ -102,16 +102,16 @@
 
 ### Implementation for User Story 4
 
-- [ ] T018 [US4] Implement `deleteAchievement` Server Action in `lib/achievements.actions.ts`
-- [ ] T019 [US4] Add "Delete" button with confirmation prompt to `app/backoffice/achievements/[id]/page.tsx`
+- [X] T018 [US4] Implement `deleteAchievement` Server Action in `lib/achievements.actions.ts`
+- [X] T019 [US4] Add "Delete" button with confirmation prompt to `app/backoffice/achievements/[id]/page.tsx`
 
 ---
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-- [ ] T020 [P] Implement Lucide icon selector in `AchievementForm` using a Popover/Dialog
-- [ ] T021 [P] Ensure all achievement pages follow the dark "gamey" aesthetic and design system
-- [ ] T022 Run `specs/001-achievements-crud/quickstart.md` validation steps
+- [X] T020 [P] Implement Lucide icon selector in `AchievementForm` using a Popover/Dialog
+- [X] T021 [P] Ensure all achievement pages follow the dark "gamey" aesthetic and design system
+- [X] T022 Run `specs/001-achievements-crud/quickstart.md` validation steps
 
 ---
 
