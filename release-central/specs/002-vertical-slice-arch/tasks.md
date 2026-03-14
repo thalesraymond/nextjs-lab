@@ -9,8 +9,8 @@
 
 **Purpose**: Project initialization and basic directory structure for vertical slices.
 
-- [ ] T001 Create foundational `features/achievements/` directory structure (`models`, `repositories`, `actions`, `__tests__`)
-- [ ] T002 Setup global mock configuration (e.g., `USE_MOCKS` environment flag)
+- [x] T001 Create foundational `features/achievements/` directory structure (`models`, `repositories`, `actions`, `__tests__`)
+- [x] T002 Setup global mock configuration (e.g., `USE_MOCKS` environment flag)
 
 ---
 
@@ -18,7 +18,7 @@
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented.
 
-- [ ] T003 Create base utility for repository resolution (if needed) to handle dependency injection/factories cleanly
+- [x] T003 Create base utility for repository resolution (if needed) to handle dependency injection/factories cleanly
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -32,9 +32,9 @@
 
 ### Implementation for User Story 1
 
-- [ ] T004 [P] [US1] Move server actions from `lib/achievements.actions.ts` to `features/achievements/actions/achievements.actions.ts`
-- [ ] T005 [P] [US1] Update imports in `app/backoffice/achievements/` pages and components (`achievement-form.tsx`, etc.) to point to the new actions location
-- [ ] T006 [P] [US1] Move existing tests from `__tests__/` or `lib/` into `features/achievements/__tests__/`
+- [x] T004 [P] [US1] Move server actions from `lib/achievements.actions.ts` to `features/achievements/actions/achievements.actions.ts`
+- [x] T005 [P] [US1] Update imports in `app/backoffice/achievements/` pages and components (`achievement-form.tsx`, etc.) to point to the new actions location
+- [x] T006 [P] [US1] Move existing tests from `__tests__/` or `lib/` into `features/achievements/__tests__/`
 
 **Checkpoint**: At this point, the app relies on the new `features/` directory but does not yet implement abstract repositories or shared validation.
 
@@ -48,11 +48,11 @@
 
 ### Implementation for User Story 2
 
-- [ ] T007 [P] [US2] Define `AchievementsRepository` interface in `features/achievements/repositories/achievements.repo.ts`
-- [ ] T008 [P] [US2] Implement the real DB access logic in `features/achievements/repositories/achievements.repo.impl.ts`
-- [ ] T009 [P] [US2] Implement the static/mock data logic in `features/achievements/repositories/achievements.repo.mock.ts`
-- [ ] T010 [US2] Create factory index in `features/achievements/repositories/index.ts` to export real or mock repo based on `process.env.USE_MOCKS`
-- [ ] T011 [US2] Refactor `features/achievements/actions/achievements.actions.ts` to consume the repository factory instead of doing direct data manipulation
+- [x] T007 [P] [US2] Define `AchievementsRepository` interface in `features/achievements/repositories/achievements.repo.ts`
+- [x] T008 [P] [US2] Implement the real DB access logic in `features/achievements/repositories/achievements.repo.impl.ts`
+- [x] T009 [P] [US2] Implement the static/mock data logic in `features/achievements/repositories/achievements.repo.mock.ts`
+- [x] T010 [US2] Create factory index in `features/achievements/repositories/index.ts` to export real or mock repo based on `process.env.USE_MOCKS`
+- [x] T011 [US2] Refactor `features/achievements/actions/achievements.actions.ts` to consume the repository factory instead of doing direct data manipulation
 
 **Checkpoint**: At this point, User Stories 1 AND 2 are complete. The feature is an encapsulated vertical slice with abstracted data access.
 
@@ -66,9 +66,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T012 [P] [US3] Create `features/achievements/models/achievements.schema.ts` covering form inputs and domain models using Zod
-- [ ] T013 [US3] Integrate Zod schemas into the client-side `achievement-form.tsx` for form validation (`zodResolver`)
-- [ ] T014 [US3] Integrate Zod validation at the beginning of Server Actions in `features/achievements/actions/achievements.actions.ts` to reject invalid payloads
+- [x] T012 [P] [US3] Create `features/achievements/models/achievements.schema.ts` covering form inputs and domain models using Zod
+- [x] T013 [US3] Integrate Zod schemas into the client-side `achievement-form.tsx` for form validation (`zodResolver`)
+- [x] T014 [US3] Integrate Zod validation at the beginning of Server Actions in `features/achievements/actions/achievements.actions.ts` to reject invalid payloads
 
 **Checkpoint**: All user stories should now be independently functional.
 
@@ -78,9 +78,9 @@
 
 **Purpose**: Cleanup legacy structure and ensure everything passes CI.
 
-- [ ] T015 [P] Remove `lib/achievements.actions.ts` completely
-- [ ] T016 Run full test suite (`pnpm test`) to catch broken relative imports in tests
-- [ ] T017 Update main `README.md` to briefly document the new Vertical Slice structure
+- [x] T015 [P] Remove `lib/achievements.actions.ts` completely
+- [x] T016 Run full test suite (`pnpm test`) to catch broken relative imports in tests
+- [x] T017 Update main `README.md` to briefly document the new Vertical Slice structure
 
 ---
 

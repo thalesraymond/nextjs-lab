@@ -1,4 +1,4 @@
-import { getAchievements } from "@/lib/achievements";
+import { getAchievements } from "@/features/achievements/actions/achievements.actions";
 import AchievementList from "./_components/achievement-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

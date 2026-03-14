@@ -1,4 +1,4 @@
-import { AchievementDocument } from "@/lib/types";
+import type { AchievementDocument } from "@/features/achievements/models/achievements.schema";
 import AchievementListItem from "./achievement-list-item";
 
 export default function AchievementList({ achievements }: { achievements: AchievementDocument[] }) {

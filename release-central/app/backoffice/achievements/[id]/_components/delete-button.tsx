@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { deleteAchievement } from "@/lib/achievements.actions";
+import { deleteAchievement } from "@/features/achievements/actions/achievements.actions";
 import { useRouter } from "next/navigation";
 
 export default function DeleteButton({ id, name }: { id: string; name: string }) {

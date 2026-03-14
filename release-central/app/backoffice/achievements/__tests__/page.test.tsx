@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import AchievementsPage from "../page";
-import { getAchievements } from "@/lib/achievements";
-import { AchievementDocument } from "@/lib/types";
+import { getAchievements } from "@/features/achievements/actions/achievements.actions";
+import type { AchievementDocument } from "@/features/achievements/models/achievements.schema";
 
-// Mock the database helper
-jest.mock("@/lib/achievements", () => ({
+// Mock the server actions module
+jest.mock("@/features/achievements/actions/achievements.actions", () => ({
   getAchievements: jest.fn(),
 }));
 

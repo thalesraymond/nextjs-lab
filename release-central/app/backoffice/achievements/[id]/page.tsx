@@ -1,4 +1,4 @@
-import { getAchievementById } from "@/lib/achievements";
+import { getAchievementById } from "@/features/achievements/actions/achievements.actions";
 import { notFound } from "next/navigation";
 import AchievementForm from "../_components/achievement-form";
 import DeleteButton from "./_components/delete-button";

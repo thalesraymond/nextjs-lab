@@ -1,4 +1,4 @@
-import { AchievementDocument } from "@/lib/types";
+import type { AchievementDocument } from "@/features/achievements/models/achievements.schema";
 import { Card, CardContent } from "@/components/ui/card";
 import * as LucideIcons from "lucide-react";
 import Link from "next/link";

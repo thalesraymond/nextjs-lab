@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useRouter } from "next/navigation";
-import { AchievementDocument } from "@/lib/types";
-import { createAchievement, updateAchievement } from "@/lib/achievements.actions";
+import type { AchievementDocument } from "@/features/achievements/models/achievements.schema";
+import { createAchievement, updateAchievement } from "@/features/achievements/actions/achievements.actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
