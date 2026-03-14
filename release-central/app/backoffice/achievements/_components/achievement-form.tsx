@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import { useRouter } from "next/navigation";
 import { AchievementDocument } from "@/lib/types";
 import { createAchievement, updateAchievement } from "@/lib/achievements.actions";
 import { Button } from "@/components/ui/button";
@@ -35,6 +36,7 @@ export default function AchievementForm({
   onSuccess?: () => void;
 }) {
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   async function actionCallback(formData: FormData) {
     setError(null);
@@ -47,7 +49,12 @@ export default function AchievementForm({
     }
 
     if (result.success) {
-      onSuccess?.();
+      if (onSuccess) {
+        onSuccess();
+      } else {
+        router.push("/backoffice/achievements");
+        router.refresh();
+      }
     } else {
       setError(result.error || "An unknown error occurred.");
     }
