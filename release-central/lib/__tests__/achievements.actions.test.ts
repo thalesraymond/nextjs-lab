@@ -1,4 +1,4 @@
-import { createAchievement, updateAchievement, deleteAchievement } from "../achievements.actions";
+import { createAchievement, updateAchievement } from "../achievements.actions";
 import * as dbHelpers from "../achievements";
 
 jest.mock("../achievements", () => ({

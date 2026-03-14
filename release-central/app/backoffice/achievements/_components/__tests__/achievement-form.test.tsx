@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AchievementForm from "../achievement-form";
 import userEvent from "@testing-library/user-event";
-import { createAchievement, updateAchievement } from "@/lib/achievements.actions";
+import { createAchievement } from "@/lib/achievements.actions";
 
 jest.mock("@/lib/achievements.actions", () => ({
   createAchievement: jest.fn(),

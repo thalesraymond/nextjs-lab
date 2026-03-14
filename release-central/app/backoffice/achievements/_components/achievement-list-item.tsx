@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function AchievementListItem({ achievement }: { achievement: AchievementDocument }) {
   // Grab the icon from Lucide, default to HelpCircle if not found
-  const IconComponent = (LucideIcons as any)[achievement.icon] || LucideIcons.HelpCircle;
+  const IconComponent = ((LucideIcons as Record<string, unknown>)[achievement.icon] as React.ElementType) || LucideIcons.HelpCircle;
 
   return (
     <Link href={`/backoffice/achievements/${achievement._id}`}>

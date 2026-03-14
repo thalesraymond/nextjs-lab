@@ -19,8 +19,8 @@ export async function createAchievement(formData: FormData) {
       success: true, 
       data: { ...result, _id: result._id?.toString() } 
     };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Failed to create achievement" };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Failed to create achievement" };
   }
 }
 
@@ -41,8 +41,8 @@ export async function updateAchievement(id: string, formData: FormData) {
       success: true, 
       data: result ? { ...result, _id: result._id?.toString() } : null 
     };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Failed to update achievement" };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Failed to update achievement" };
   }
 }
 
@@ -51,7 +51,7 @@ export async function deleteAchievement(id: string) {
     await deleteDb(id);
     revalidatePath("/backoffice/achievements");
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Failed to delete achievement" };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : "Failed to delete achievement" };
   }
 }
