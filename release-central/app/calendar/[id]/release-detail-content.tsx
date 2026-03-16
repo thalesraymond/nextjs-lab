@@ -24,14 +24,30 @@ export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
   const [selectedSquad, setSelectedSquad] = useState<string | null>(null)
   const packages = release.packages
 
-  const stats = useMemo(() => {
-    const uniqueSquads = new Set(packages.map((p) => p.squad)).size
-    const legalDemands = packages.filter((p) => p.isLegalDemand).length
-    return { total: packages.length, uniqueSquads, totalPrs: packages.length, legalDemands }
-  }, [packages])
+  const { stats, uniqueSquads } = useMemo(() => {
+    // ⚡ Bolt: Consolidated multiple iterations over `packages` into a single pass.
+    // This avoids redundant mapping, filtering, and Set creation in separate hooks,
+    // significantly reducing CPU overhead and memory allocations during renders.
+    const squadSet = new Set<string>()
+    let legalDemands = 0
 
-  const uniqueSquads = useMemo(() => {
-    return Array.from(new Set(packages.map((p) => p.squad))).sort()
+    for (let i = 0; i < packages.length; i++) {
+      const p = packages[i]
+      squadSet.add(p.squad)
+      if (p.isLegalDemand) {
+        legalDemands++
+      }
+    }
+
+    return {
+      stats: {
+        total: packages.length,
+        uniqueSquads: squadSet.size,
+        totalPrs: packages.length,
+        legalDemands,
+      },
+      uniqueSquads: Array.from(squadSet).sort(),
+    }
   }, [packages])
 
   const filteredPackages = useMemo(() => {
