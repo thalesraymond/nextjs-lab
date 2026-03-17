@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { CopyButton } from "@/components/ui/copy-button"
 
 interface ReleaseDetailContentProps {
   release: Release
@@ -96,9 +97,18 @@ export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
               {release.platform}
             </span>
             {release.gmud && (
-              <span className="text-xs font-mono px-2 py-1 rounded bg-white/5 border border-white/10 text-muted-foreground">
-                {release.gmud}
-              </span>
+              <div className="inline-flex items-center gap-1.5 bg-white/5 px-2 py-1 rounded border border-white/10 text-muted-foreground">
+                <span className="text-xs font-mono">
+                  {release.gmud}
+                </span>
+                <span onClick={(e) => e.stopPropagation()}>
+                  <CopyButton
+                    text={release.gmud}
+                    className="p-0.5 hover:bg-white/10 text-muted-foreground hover:text-white"
+                    title="Copiar GMUD"
+                  />
+                </span>
+              </div>
             )}
             <span className="text-xs text-muted-foreground">
               Limite: {release.dateLimit}
@@ -191,8 +201,13 @@ export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
                     key={pkg.gmudNumber}
                     className="group transition-colors border-b-border/30 hover:bg-white/5"
                   >
-                    <TableCell className="font-mono text-sm text-foreground">
-                      {pkg.gmudNumber}
+                    <TableCell className="font-mono text-sm text-foreground flex items-center gap-2">
+                      <span>{pkg.gmudNumber}</span>
+                      <CopyButton
+                        text={pkg.gmudNumber}
+                        className="p-1 w-6 h-6 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 text-muted-foreground hover:text-white"
+                        title="Copiar GMUD"
+                      />
                     </TableCell>
                     <TableCell>
                       <a
