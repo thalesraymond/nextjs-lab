@@ -7,3 +7,6 @@
 ## 2025-03-02 - Interactive Table Header Accessibility
 **Learning:** Table headers (`<th>`) that act as sort triggers lack implicit keyboard interactivity and role communication. Screen readers need `aria-sort` to announce the current sort state, and keyboard users need `tabIndex` and `onKeyDown` to interact with them via Space or Enter.
 **Action:** When creating sortable data tables, explicitly add `tabIndex={0}`, an `onKeyDown` handler (for Space and Enter), an `aria-label` describing the sort action, `aria-sort` mapping to the active sort direction, and clear `focus-visible` styling (`focus-visible:ring-2`) to the `TableHead` component.
+## 2024-05-20 - Adding dynamic error alerts in React forms
+**Learning:** When displaying dynamic error messages (like those returning from an authentication fetch error), using standard divs means screen readers won't announce the error automatically. In Next.js/React forms, this causes a frustrating UX where visually the user sees an error, but screen reader users get no feedback on form submission failure.
+**Action:** Always add `role="alert"` and `aria-live="assertive"` to dynamic error message containers that appear post-submission.
