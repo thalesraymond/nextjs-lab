@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Loader2 } from 'lucide-react';
 
 export function LoginForm() {
   const router = useRouter();
@@ -59,7 +60,7 @@ export function LoginForm() {
       </div>
       
       {error && (
-        <div className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/50 text-red-500 text-sm text-center font-medium animate-in fade-in slide-in-from-top-2">
+        <div role="alert" aria-live="assertive" className="mb-6 p-4 rounded-lg bg-red-500/10 border border-red-500/50 text-red-500 text-sm text-center font-medium animate-in fade-in slide-in-from-top-2">
           {error}
         </div>
       )}
@@ -90,9 +91,16 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 mt-4 rounded-lg font-bold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5"
+          className="flex items-center justify-center gap-2 w-full py-3 mt-4 rounded-lg font-bold text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 focus:ring-offset-background disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5"
         >
-          {loading ? 'Authenticating...' : 'Sign In ->'}
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Authenticating...</span>
+            </>
+          ) : (
+            'Sign In ->'
+          )}
         </button>
       </form>
 

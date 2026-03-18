@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 export function RegisterForm() {
   const router = useRouter();
@@ -53,7 +54,7 @@ export function RegisterForm() {
       </div>
       
       {error && (
-        <div className="mb-4 p-3 rounded bg-red-500/10 border border-red-500/50 text-red-500 text-sm text-center">
+        <div role="alert" aria-live="assertive" className="mb-4 p-3 rounded bg-red-500/10 border border-red-500/50 text-red-500 text-sm text-center">
           {error}
         </div>
       )}
@@ -95,9 +96,16 @@ export function RegisterForm() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 mt-2 rounded-md font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center justify-center gap-2 w-full py-2.5 mt-2 rounded-md font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
-          {loading ? 'Registering...' : 'Register'}
+          {loading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Registering...</span>
+            </>
+          ) : (
+            'Register'
+          )}
         </button>
       </form>
     </div>
