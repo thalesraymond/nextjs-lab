@@ -24,15 +24,21 @@ export function ReleaseDetailContent({ release }: ReleaseDetailContentProps) {
   const [selectedSquad, setSelectedSquad] = useState<string | null>(null)
   const packages = release.packages
 
-  const stats = useMemo(() => {
-    const uniqueSquads = new Set(packages.map((p) => p.squad)).size
-    const legalDemands = packages.filter((p) => p.isLegalDemand).length
-    return { total: packages.length, uniqueSquads, totalPrs: packages.length, legalDemands }
-  }, [packages])
-
   const uniqueSquads = useMemo(() => {
     return Array.from(new Set(packages.map((p) => p.squad))).sort()
   }, [packages])
+
+  const stats = useMemo(() => {
+    // ⚡ Bolt: Use the pre-computed uniqueSquads.length and a single reduce pass
+    // to avoid O(N) redundant array filtering and Set allocations on each render.
+    const legalDemands = packages.reduce((count, p) => p.isLegalDemand ? count + 1 : count, 0)
+    return {
+      total: packages.length,
+      uniqueSquads: uniqueSquads.length,
+      totalPrs: packages.length,
+      legalDemands
+    }
+  }, [packages, uniqueSquads.length])
 
   const filteredPackages = useMemo(() => {
     if (!selectedSquad) return packages
