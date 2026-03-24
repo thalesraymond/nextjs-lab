@@ -1,11 +1,15 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { SquadScore } from "../types";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ChevronUp, ChevronDown, Minus, Search } from "lucide-react";
 import { SquadDetailsSheet } from "./squad-details-sheet";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+type SortColumn = "position" | "squad" | "release_train" | "community" | "total_points" | "total_deliveries" | "tier" | "historical_position";
+type SortDirection = "asc" | "desc";
 
 interface SquadRankingsTableProps {
   squads: SquadScore[];
@@ -14,6 +18,8 @@ interface SquadRankingsTableProps {
 export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
   const [selectedSquad, setSelectedSquad] = useState<SquadScore | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortColumn, setSortColumn] = useState<SortColumn | null>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
 
   const getTierColor = (tier: number) => {
     switch (tier) {
@@ -68,6 +74,62 @@ export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
     ));
   }, [squads, searchTerm]);
 
+  const sortedSquads = useMemo(() => {
+    if (!sortColumn) return filteredSquads;
+
+    return [...filteredSquads].sort((a, b) => {
+      let aValue: string | number = a[sortColumn];
+      let bValue: string | number = b[sortColumn];
+
+      // For "Evolução" (evolution), sort by delta
+      if (sortColumn === "historical_position") {
+        aValue = a.historical_position - a.position;
+        bValue = b.historical_position - b.position;
+      }
+
+      if (aValue < bValue) return sortDirection === "asc" ? -1 : 1;
+      if (aValue > bValue) return sortDirection === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [filteredSquads, sortColumn, sortDirection]);
+
+  const handleSort = useCallback((column: SortColumn) => {
+    if (sortColumn === column) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
+    } else {
+      setSortColumn(column);
+      setSortDirection("asc");
+    }
+  }, [sortColumn]);
+
+  const renderSortIcon = useCallback((column: SortColumn) => {
+    if (sortColumn !== column) return <span className="w-4" />;
+    return sortDirection === "asc" ? <ChevronUp className="w-4 h-4 ml-1" /> : <ChevronDown className="w-4 h-4 ml-1" />;
+  }, [sortColumn, sortDirection]);
+
+  const renderSortableHeader = (column: SortColumn, label: string, className?: string) => (
+    <TableHead
+      className={cn(
+        "cursor-pointer hover:bg-white/5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset",
+        className
+      )}
+      onClick={() => handleSort(column)}
+      tabIndex={0}
+      aria-label={`Sort by ${label}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleSort(column);
+        }
+      }}
+      aria-sort={sortColumn === column ? (sortDirection === "asc" ? "ascending" : "descending") : "none"}
+    >
+      <div className={cn("flex items-center", className?.includes("text-right") && "justify-end", className?.includes("text-center") && "justify-center")}>
+        {label} {renderSortIcon(column)}
+      </div>
+    </TableHead>
+  );
+
   return (
     <>
       <div className="border rounded-lg bg-card/50 backdrop-blur shadow-sm">
@@ -89,19 +151,19 @@ export function SquadRankingsTable({ squads }: SquadRankingsTableProps) {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-16 text-center">Posição</TableHead>
-                <TableHead className="w-24 text-center">Evolução</TableHead>
-                <TableHead>Squad</TableHead>
-                <TableHead>Release Train</TableHead>
-                <TableHead>Comunidade</TableHead>
-                <TableHead className="text-right">Pontos</TableHead>
-                <TableHead className="text-right">Entregas</TableHead>
-                <TableHead className="text-center">Tier</TableHead>
+                {renderSortableHeader("position", "Posição", "w-16 text-center")}
+                {renderSortableHeader("historical_position", "Evolução", "w-24 text-center")}
+                {renderSortableHeader("squad", "Squad")}
+                {renderSortableHeader("release_train", "Release Train")}
+                {renderSortableHeader("community", "Comunidade")}
+                {renderSortableHeader("total_points", "Pontos", "text-right")}
+                {renderSortableHeader("total_deliveries", "Entregas", "text-right")}
+                {renderSortableHeader("tier", "Tier", "text-center")}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredSquads.length > 0 ? (
-                filteredSquads.map((squad) => (
+              {sortedSquads.length > 0 ? (
+                sortedSquads.map((squad) => (
                   <TableRow
                     key={squad.squad}
                     className="cursor-pointer hover:bg-muted/50 transition-colors focus-visible:outline-none focus-visible:bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-inset"
