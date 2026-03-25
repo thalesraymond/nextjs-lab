@@ -40,7 +40,7 @@ export default async function EditAchievementPage(props: PageProps) {
       </div>
 
       <div className="flex justify-end">
-        <DeleteButton id={String(achievement._id)} name={achievement.name} />
+        <DeleteButton id={String(achievement._id)} />
       </div>
 
       <div className="p-6 border border-border/50 rounded-xl bg-card">

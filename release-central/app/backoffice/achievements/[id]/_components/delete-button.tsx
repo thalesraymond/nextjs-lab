@@ -12,6 +12,14 @@ export default function DeleteButton({ id }: { id: string }) {
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+
   const resetConfirmation = () => {
     setIsConfirming(false);
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
