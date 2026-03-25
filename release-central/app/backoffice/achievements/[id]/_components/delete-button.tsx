@@ -6,7 +6,7 @@ import { Trash2, AlertCircle } from "lucide-react";
 import { deleteAchievement } from "@/lib/achievements.actions";
 import { useRouter } from "next/navigation";
 
-export default function DeleteButton({ id }: { id: string; name: string }) {
+export default function DeleteButton({ id }: { id: string }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
