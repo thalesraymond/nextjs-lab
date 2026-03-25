@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Trash2, AlertCircle } from "lucide-react";
 import { deleteAchievement } from "@/lib/achievements.actions";
