@@ -27,8 +27,8 @@ export default async function EditAchievementPage(props: PageProps) {
     <div className="container mx-auto py-8 px-4 max-w-2xl space-y-6 text-foreground">
       <div className="flex items-center gap-4">
         <Link href="/backoffice/achievements">
-          <Button variant="ghost" size="icon">
-            <ChevronLeft className="w-5 h-5" />
+          <Button variant="ghost" size="icon" aria-label="Back to achievements" title="Back to achievements">
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
           </Button>
         </Link>
         <div>
