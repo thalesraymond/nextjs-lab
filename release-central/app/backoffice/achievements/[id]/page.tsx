@@ -27,8 +27,8 @@ export default async function EditAchievementPage(props: PageProps) {
     <div className="container mx-auto py-8 px-4 max-w-2xl space-y-6 text-foreground">
       <div className="flex items-center gap-4">
         <Link href="/backoffice/achievements">
-          <Button variant="ghost" size="icon">
-            <ChevronLeft className="w-5 h-5" />
+          <Button variant="ghost" size="icon" aria-label="Back to achievements" title="Back to achievements">
+            <ChevronLeft className="w-5 h-5" aria-hidden="true" />
           </Button>
         </Link>
         <div>
@@ -40,7 +40,7 @@ export default async function EditAchievementPage(props: PageProps) {
       </div>
 
       <div className="flex justify-end">
-        <DeleteButton id={String(achievement._id)} name={achievement.name} />
+        <DeleteButton id={String(achievement._id)} />
       </div>
 
       <div className="p-6 border border-border/50 rounded-xl bg-card">
