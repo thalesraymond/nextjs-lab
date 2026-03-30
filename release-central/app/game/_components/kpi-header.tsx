@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { GameStats } from "../types";
 import { KPICard } from "./kpi-card";
 
@@ -6,11 +7,14 @@ interface KPIHeaderProps {
 }
 
 export function KPIHeader({ stats }: KPIHeaderProps) {
-  // Calculate Total Deliveries
-  const totalDeliveries = stats.squads_scores.reduce(
-    (acc, squad) => acc + squad.delivery_items.length,
-    0
-  );
+  // ⚡ Bolt: Cache total deliveries computation to prevent redundant O(N) array
+  // iteration across all squads on every render.
+  const totalDeliveries = useMemo(() => {
+    return stats.squads_scores.reduce(
+      (acc, squad) => acc + squad.delivery_items.length,
+      0
+    );
+  }, [stats.squads_scores]);
 
   // Get Global Events (assuming first item in array as per design doc)
   const globalEvents = stats.score_events[0] || {
