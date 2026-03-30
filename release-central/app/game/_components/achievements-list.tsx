@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Achievement } from "../types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bug, Code, Zap, ShieldCheck, Trophy, LucideIcon } from "lucide-react";
@@ -15,7 +16,11 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 
 export function AchievementsList({ achievements }: AchievementsListProps) {
-  const sortedAchievements = [...achievements].sort((a, b) => b.percentage - a.percentage);
+  // ⚡ Bolt: Cache sorted achievements to prevent redundant O(N log N)
+  // sorting array allocation on every component render.
+  const sortedAchievements = useMemo(() => {
+    return [...achievements].sort((a, b) => b.percentage - a.percentage);
+  }, [achievements]);
 
   return (
     <Card className="col-span-4 border-border/50 bg-card/50 backdrop-blur-sm">
